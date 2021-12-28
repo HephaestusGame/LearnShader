@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 4890085278179872738, guid: a201cfc367fe9fd47ab2284c143863b8, type: 2}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: 8cd2bd5daf575f7469031b8fcc087dfd, type: 2}
 --- !u!196 &5
 NavMeshSettings:
   serializedVersion: 2
@@ -229,7 +229,7 @@ Texture2D:
   m_ForcedFallbackFormat: 4
   m_DownscaleFallback: 0
   m_IsAlphaChannelOptional: 0
-  serializedVersion: 3
+  serializedVersion: 2
   m_Width: 512
   m_Height: 512
   m_CompleteImageSize: 1398100
@@ -263,9 +263,6 @@ Texture2D:
     offset: 0
     size: 0
     path: 
-  m_OriginalWidth: 0
-  m_OriginalHeight: 0
-  m_OriginalAssetGuid: 00000000000000000000000000000000
 --- !u!1 &405551273
 GameObject:
   m_ObjectHideFlags: 0
