@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00fcb0528820550499d051030855ca6d, type: 3}
+  m_Name: README!
+  m_EditorClassIdentifier: 
+  icon: {fileID: 2800000, guid: 7ec2240c3db649446913287cea18cd7e, type: 3}
+  title: Little Dragon Legacy
+  sections:
+  - heading: Little Dragon Legacy
+    text: This Package contains the old Animal Controller working with the Little
+      Dragon Asset. The same asset was on the Little Dragon Tiger Youtube video.
+      This Controller is no longer supported and it is highly recommended to use
+      the latest Animal Controller from the asset store.
+    linkText: 
+    url: 
+    reference: {fileID: 0}
+  - heading: Remove this folder and files if you will use the new Animal Controller
+    text: 
+    linkText: 
+    url: 
+    reference: {fileID: 0}
+  - heading: 
+    text: Once the package is unpacked you will get the old demo scenes
+    linkText: 
+    url: 
+    reference: {fileID: 0}
+  packages: []

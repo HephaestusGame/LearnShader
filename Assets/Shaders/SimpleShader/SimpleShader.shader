@@ -34,6 +34,7 @@ Shader "SimpleShader"
 		_Color ("Color Tint", Color) = (1.0, 1.0, 1.0, 1.0)
 	}
 
+	//针对显卡A的SubShader
 	SubShader
 	{
 		Pass 
@@ -77,7 +78,7 @@ Shader "SimpleShader"
 				return o;
 			}
 
-			//SV_TARGET：把用户的输出颜色存储到一个渲染目标（render target)中
+			//SV_TARGET：把用户的输出颜色存储到一个渲染目标（render target)中,默认是帧缓冲
 			fixed4 frag(v2f i) : SV_TARGET {
 				return fixed4(i.color * _Color.rgb, 1.0);
 			}
@@ -85,7 +86,7 @@ Shader "SimpleShader"
 			ENDCG
 		}
 	}
+	
+	//上述SubShader都失败后用于回调的Unity Shader
+    Fallback "Specular"
 }
-
-
-

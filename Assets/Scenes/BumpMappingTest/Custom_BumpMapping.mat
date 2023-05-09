@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Custom_BumpMapping
+  m_Shader: {fileID: 4800000, guid: 6c6864b95df860048a1d5243de86ed61, type: 3}
+  m_ValidKeywords:
+  - PARALLAX
+  - PARALLAX_OCCLUSION
+  - STEEP_PARALLAX
+  m_InvalidKeywords:
+  - _STEEPPARALLAXMAPPING_ON
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: e70811da5783da5439461b5adf281897, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 942f5d3017caec94f8214448cb400a02, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 2800000, guid: dfbd7d5d987b4ab4eae2de3002c6b1e8, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BumpScale: 1
+    - _Gloss: 256
+    - _Glossiness: 0.5
+    - _HeightScale: 0.1
+    - _Metallic: 0
+    - _ParallaxMapping: 1
+    - _ParallaxOcclusionMapping: 1
+    - _SteepHeightScale: 0.53
+    - _SteepParallaxMapping: 1
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Specular: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []
