@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 01886f794dd494b40a74c944bff5e3cf
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - taaShader: {fileID: 4800000, guid: b776960ed62e7c842a099873f7f5b9f2, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
