@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Custom_DirectionalFlow
+  m_Shader: {fileID: 4800000, guid: b242fe69fc4f3423f8df0afb65ea935d, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _DUAL_GRID
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _FlowMap:
+        m_Texture: {fileID: 2800000, guid: 5126f3304d2084d7e824deb2e79c69ae, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 6dbbe2030c25a4b28b8eabe47cd2def7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _DualGrid: 1
+    - _FlowStrength: 0.2
+    - _Glossiness: 0.7
+    - _GridResolution: 22.44
+    - _HeightScale: 1.25
+    - _HeightScaleModulated: -5.61
+    - _Metallic: 0
+    - _Speed: 0.68
+    - _Tiling: 3
+    - _TilingModulated: 50
+    m_Colors:
+    - _Color: {r: 0.01966893, g: 0.20645744, b: 0.3207547, a: 1}
+  m_BuildTextureStacks: []
