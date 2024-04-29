@@ -35,6 +35,10 @@ Shader "Unlit/Water"
         _StepSize("StepSize", Float) = 1
         _MaxDistance("MaxDistance",Float) = 10
         _Thickness("Thickness",Float) = 1
+        _StretchIntensity("Stretch Intensity",Range(0, 2)) = 1
+        _StretchThreshold("Stretch Threshold",Range(0, 1.0)) = 1
+        _VerticalFadeOutScreenBorderWidth("Vertical Fade Out Screen Border Width",Range(0, 1.0)) = 1
+        _HorizontalFadeOutScreenBorderWidth("Horizontal Fade Out Screen Border Width",Range(0, 1.0)) = 1
     }
     SubShader
     {
@@ -152,7 +156,8 @@ Shader "Unlit/Water"
                 float3 specular = _LightColor0 * pow(NDotH, _SpecularGloss);
 
                 //SSR
-                float3 ssrColor = SSR(_BackgroundTexture, _CameraDepthTexture,  i.viewDirWS, N);
+                float3 curPixelWorldPos = _WorldSpaceCameraPos + i.viewDirWS;
+                float3 ssrColor = SSR(_BackgroundTexture, _CameraDepthTexture,  i.viewDirWS, N, curPixelWorldPos.y);
                 float3 reflectColor = specular + ssrColor;
                 return reflectColor * colorFactor;
             }

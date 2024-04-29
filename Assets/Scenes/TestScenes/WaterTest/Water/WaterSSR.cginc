@@ -5,6 +5,10 @@ float _MaxStep;
 float _StepSize;
 float _MaxDistance;
 float _Thickness;
+float _StretchIntensity;
+float _StretchThreshold;
+float _VerticalFadeOutScreenBorderWidth;
+float _HorizontalFadeOutScreenBorderWidth;
 
 
 float4 TransformViewToHScreen(float3 vpos)
@@ -22,7 +26,29 @@ float3 SampleSky(float3 reflectWS)
     return skyColor;
 }
 
-float3 SSR(sampler2D screenTex, sampler2D cameraDepthTex, float3 viewDirWS, float3 normalWS)
+float2 StretchUV(float2 uv, float2 viewDirWS, float3 reflectPosWS, float curPixelWaterPlaneHeight)
+{
+    float heightStretch = (reflectPosWS.y - curPixelWaterPlaneHeight) * 0.01;
+    float angleStretch = -viewDirWS.y;
+    float screenStretch = saturate(abs(uv.x * 2 - 1) - _StretchThreshold);
+
+    uv.x = uv.x * 2 - 1;
+    uv.x *= 1 - heightStretch * angleStretch * screenStretch * _StretchIntensity;
+    uv.x = saturate(uv.x * 0.5 + 0.5);
+    return uv;
+}
+
+float GetFadeOutAlpha(float2 screenUV, float reflectedPosWSy, float curPixelWaterPlaneHeight)
+{
+    float fadeoutAlpha = smoothstep(1, 1 - _VerticalFadeOutScreenBorderWidth, screenUV.y);
+    fadeoutAlpha *= smoothstep(
+        1,
+        1 - _HorizontalFadeOutScreenBorderWidth * (reflectedPosWSy - curPixelWaterPlaneHeight),
+        abs(screenUV.x * 2 - 1));
+    return fadeoutAlpha;
+}
+
+float3 SSR(sampler2D screenTex, sampler2D cameraDepthTex, float3 viewDirWS, float3 normalWS, float curPixelWaterPlaneHeight)
 {
     float3 viewDirVS = mul(unity_WorldToCamera, float4(viewDirWS, 0)).xyz;
     viewDirVS.z *= -1;
@@ -32,7 +58,8 @@ float3 SSR(sampler2D screenTex, sampler2D cameraDepthTex, float3 viewDirWS, floa
     float3 normalVS = mul(unity_WorldToCamera, float4(normalWS, 0)).xyz;
     normalVS.z *= -1;
 
-    
+
+    viewDirWS = normalize(viewDirWS);
     float3 reflectWS = reflect(viewDirWS, normalWS);
     float3 reflectDirVS = normalize(reflect(viewDirVS, normalVS));
     float magnitude = _MaxDistance;
@@ -84,6 +111,12 @@ float3 SSR(sampler2D screenTex, sampler2D cameraDepthTex, float3 viewDirWS, floa
     float endX = endScreen.x * dir;
 
     float3 skyColor = SampleSky(reflectWS);
+
+    float startPosEyeDepth = -curPixelPosVS.z;
+    float endPosEyeDepth = -endPosVS.z;
+    float eyeDepthDiff = endPosEyeDepth - startPosEyeDepth;
+    float3 raymarchingRay = endPosVS - curPixelPosVS;
+    float3 temp = raymarchingRay * rcp(eyeDepthDiff);//raymarchingRay / eyeDepthDiff
     UNITY_LOOP//不进行循环展开
     for (int i = 0; i < _MaxStep && P.x * dir <= endX; ++i)
     {
@@ -96,7 +129,12 @@ float3 SSR(sampler2D screenTex, sampler2D cameraDepthTex, float3 viewDirWS, floa
 
         float2 hitUV = permute ? P.yx : P;
         hitUV *= (_ScreenParams.zw - 1);
-        //stretch
+        
+        float3 reflectPosVS = curPixelPosVS + temp *  (reflectEyeDepth - startPosEyeDepth);
+        reflectPosVS.z *= -1;
+        float3 reflectPosWS = mul(unity_CameraToWorld, float4(reflectPosVS, 1)).xyz;
+        //stretch 效果并不好
+        // hitUV = StretchUV(hitUV, viewDirWS, reflectPosWS, curPixelWaterPlaneHeight);
         
         if (any(hitUV < 0.0) || any(hitUV > 1.0))
             return skyColor;
@@ -106,7 +144,7 @@ float3 SSR(sampler2D screenTex, sampler2D cameraDepthTex, float3 viewDirWS, floa
         if (reflectEyeDepth > curStepEyeDepth + 0.03 && reflectEyeDepth < curStepEyeDepth + _Thickness)
         {
             float3 reflectColor = tex2D(screenTex, hitUV).rgb;
-            float fade = smoothstep(1.0f, .9f, hitUV.y);
+            float fade = GetFadeOutAlpha(hitUV, reflectPosWS.y, curPixelWaterPlaneHeight);
             return fade * reflectColor  + (1 - fade) * skyColor;
         }
         

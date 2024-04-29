@@ -47,14 +47,18 @@ Material:
     m_Floats:
     - _DeepWaterDistance: 58
     - _DeepWaterLerpPow: 1.21
+    - _HorizontalFadeOutScreenBorderWidth: 0.003
     - _MaxDistance: 552.6
-    - _MaxStep: 4147
+    - _MaxStep: 1200
     - _NoiseIntensity: 0.01
     - _NormalScale: 0
     - _RefractionStrength: 3.73
     - _SpecularGloss: 100
     - _StepSize: 1
-    - _Thickness: 2.1
+    - _StretchIntensity: 0
+    - _StretchThreshold: 0.471
+    - _Thickness: 6
+    - _VerticalFadeOutScreenBorderWidth: 0.225
     m_Colors:
     - _DeepColor: {r: 0, g: 0.2911788, b: 0.33018845, a: 1}
     - _ShallowColor: {r: 0.23829655, g: 0.4811321, b: 0.3744316, a: 0.54509807}
