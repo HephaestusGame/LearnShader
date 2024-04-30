@@ -23,45 +23,58 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _CausticsTex:
+        m_Texture: {fileID: 2800000, guid: eb197f8dea26a400296ebd989fb4523d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FoamNoiseTex:
+        m_Texture: {fileID: 2800000, guid: e182ac5d3b797044fb29f3fa2acc3708, type: 3}
+        m_Scale: {x: 5, y: 5}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NoiseTex:
-        m_Texture: {fileID: 2800000, guid: 33a5819872dcf4d6d912cdb1067ab12b, type: 3}
-        m_Scale: {x: 1.8, y: 1.7}
-        m_Offset: {x: 1.9, y: 0}
+        m_Texture: {fileID: 2800000, guid: 47cdda17bb08a47b0a50675cbb83cfa2, type: 3}
+        m_Scale: {x: 0.001, y: 0.001}
+        m_Offset: {x: 0.27, y: 0.85}
     - _NormalTex:
         m_Texture: {fileID: 2800000, guid: 33a5819872dcf4d6d912cdb1067ab12b, type: 3}
         m_Scale: {x: 14.53, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalTex_0:
         m_Texture: {fileID: 2800000, guid: 33a5819872dcf4d6d912cdb1067ab12b, type: 3}
-        m_Scale: {x: 0.8, y: 0.8}
+        m_Scale: {x: 8, y: 8}
         m_Offset: {x: 0, y: 0}
     - _NormalTex_1:
         m_Texture: {fileID: 2800000, guid: 33a5819872dcf4d6d912cdb1067ab12b, type: 3}
-        m_Scale: {x: 0.7, y: 0.7}
+        m_Scale: {x: 10, y: 10}
         m_Offset: {x: 0.31, y: 0}
     m_Ints: []
     m_Floats:
-    - _DeepWaterDistance: 58
-    - _DeepWaterLerpPow: 1.21
+    - _CausticsIntensity: 1.35
+    - _CausticsJitterScale: 3
+    - _DeepWaterDistance: 83.93
+    - _DeepWaterLerpPow: 0.12
+    - _FoamDepth: 3
     - _HorizontalFadeOutScreenBorderWidth: 0.003
     - _MaxDistance: 552.6
-    - _MaxStep: 1200
+    - _MaxStep: 1200.15
     - _NoiseIntensity: 0.01
-    - _NormalScale: 0
-    - _RefractionStrength: 3.73
+    - _NormalScale: 1.1
+    - _RefractionStrength: 8.42
     - _SpecularGloss: 100
-    - _StepSize: 1
+    - _StepSize: 0.48
     - _StretchIntensity: 0
     - _StretchThreshold: 0.471
     - _Thickness: 6
     - _VerticalFadeOutScreenBorderWidth: 0.225
     m_Colors:
-    - _DeepColor: {r: 0, g: 0.2911788, b: 0.33018845, a: 1}
-    - _ShallowColor: {r: 0.23829655, g: 0.4811321, b: 0.3744316, a: 0.54509807}
-    - _WaterSpeed: {r: 0.003, g: 0.003, b: 0.003, a: 0.004}
-    - _WindSpeed: {r: 0.01, g: 0, b: 0, a: 0}
+    - _CausticsTilingAndSpeed: {r: 0.005, g: 0.005, b: 0, a: 0}
+    - _DeepColor: {r: 0, g: 0.16981131, b: 0, a: 1}
+    - _FoamColor: {r: 0.5377358, g: 0.5377358, b: 0.5377358, a: 1}
+    - _ShallowColor: {r: 0.014684939, g: 0.6226415, b: 0.37565914, a: 0.54509807}
+    - _WaterSpeed: {r: 0.3, g: 0.15, b: 0.25, a: 0.33}
+    - _WindSpeed: {r: 0.1, g: 0.1, b: 0, a: 0}
   m_BuildTextureStacks: []

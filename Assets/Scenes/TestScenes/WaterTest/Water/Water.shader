@@ -13,6 +13,13 @@ Shader "Unlit/Water"
         _DeepWaterDistance("Deep Water Distance", Float) = 10
         _DeepWaterLerpPow("Deep Water Lerp Pow", Range(0, 10)) = 1
         
+        [Space(30)]
+        [Header(Caustics)]
+        [Space(5)]
+        _CausticsTex("Caustics Texture", 2D) = "black" {}
+        _CausticsTilingAndSpeed("Caustics Tiling", Vector) = (0.01, 0.01, 0.01, 0.01)
+        _CausticsIntensity("Caustics Intensity", Float) = 1
+        _CausticsJitterScale("Caustics Jitter Scale", Float) = 1
         
         [Space(30)]
         [Header(Wind)]
@@ -39,6 +46,13 @@ Shader "Unlit/Water"
         _StretchThreshold("Stretch Threshold",Range(0, 1.0)) = 1
         _VerticalFadeOutScreenBorderWidth("Vertical Fade Out Screen Border Width",Range(0, 1.0)) = 1
         _HorizontalFadeOutScreenBorderWidth("Horizontal Fade Out Screen Border Width",Range(0, 1.0)) = 1
+        
+        [Space(30)]
+        [Header(Foam)]
+        [Space(5)]
+        _FoamNoiseTex("Foam Noise Texture", 2D) = "white" {}
+        _FoamDepth("Foam Depth", Float) = 3
+        _FoamColor("Foam Color", Color) = (1, 1, 1, 1)
     }
     SubShader
     {
@@ -82,7 +96,7 @@ Shader "Unlit/Water"
                 float4 normalUV : TEXCOORD5;
             };
 
-            sampler2D _MainTex, _NoiseTex;
+            sampler2D _MainTex, _NoiseTex, _CausticsTex;
             float4 _MainTex_ST, _NoiseTex_ST;
 
             sampler2D _CameraDepthTexture;
@@ -100,6 +114,15 @@ Shader "Unlit/Water"
             sampler2D _BackgroundTexture;
             float4 _BackgroundTexture_TexelSize;
 
+            float4 _CausticsTilingAndSpeed;
+            float _CausticsIntensity, _CausticsJitterScale;
+
+
+            sampler2D _FoamNoiseTex;
+            float4 _FoamNoiseTex_ST;
+            float4 _FoamColor;
+            float _FoamDepth;
+            
             float ViewSpaceDepthColorFactor(v2f i)
             {
                 float depthBufferValue = tex2Dproj(_CameraDepthTexture, i.screenPos).r;
@@ -109,11 +132,11 @@ Shader "Unlit/Water"
             }
 
 
-            float WorldSpaceDepthDiff(float2 uv, float curPixelEyeDepth, float3 viewDirWS, float3 curPixelWorldPos)
+            float WorldSpaceDepthDiff(float2 uv, float curPixelEyeDepth, float3 viewDirWS, float3 curPixelWorldPos, out float3 curPiexlDepthBufferWorldPos)
             {
                 float depthBufferValue = tex2D(_CameraDepthTexture, uv).r;
                 float bufferEyeDepth = LinearEyeDepth(depthBufferValue);
-                float3 curPiexlDepthBufferWorldPos = _WorldSpaceCameraPos + (bufferEyeDepth / curPixelEyeDepth) * viewDirWS;
+                curPiexlDepthBufferWorldPos = _WorldSpaceCameraPos + (bufferEyeDepth / curPixelEyeDepth) * viewDirWS;
                 return  curPixelWorldPos.y - curPiexlDepthBufferWorldPos.y;
             }
             
@@ -133,14 +156,20 @@ Shader "Unlit/Water"
                 float2 uv = (i.screenPos.xy + uvOffset) / i.screenPos.w;
 
                 
-                float depthDiff = WorldSpaceDepthDiff(uv, i.screenPos.w, i.viewDirWS, curPixelWorldPos);
+                float3 curPiexlDepthBufferWorldPos;
+                float depthDiff = WorldSpaceDepthDiff(uv, i.screenPos.w, i.viewDirWS, curPixelWorldPos, curPiexlDepthBufferWorldPos);
                 uvOffset *= saturate(pow(depthDiff / _DeepWaterDistance, 1));//depthDiff < 0时，表示在水面上，将偏移置为 0，否则深度越大，偏移越大
                 uv = (i.screenPos.xy + uvOffset) / i.screenPos.w;
-                depthDiff = WorldSpaceDepthDiff(uv, i.screenPos.w, i.viewDirWS, curPixelWorldPos);
+                depthDiff = WorldSpaceDepthDiff(uv, i.screenPos.w, i.viewDirWS, curPixelWorldPos, curPiexlDepthBufferWorldPos);
 
-                
+    
                 float lerpFactor = saturate(pow(depthDiff / _DeepWaterDistance, _DeepWaterLerpPow));
+                //background
                 float4 background = tex2D(_BackgroundTexture, uv);
+                //Caustics
+                // float3 caustics = tex2D(_CausticsTex, (curPiexlDepthBufferWorldPos.xz + normal.xy * _CausticsJitterScale) * _CausticsTilingAndSpeed.xy + _Time.y * _CausticsTilingAndSpeed.zw).rgb * _CausticsIntensity * lerpFactor; 
+                // background += caustics;
+                
                 float4 waterColor = lerp(_ShallowColor, _DeepColor, lerpFactor);
                 float3 refractedColor = lerp(background, waterColor, lerpFactor);
                 return refractedColor * colorFactor;
@@ -178,6 +207,19 @@ Shader "Unlit/Water"
                 return o;
             }
 
+            float GetFoamMask(v2f i)
+            {
+                float3 curPixelWorldPos = _WorldSpaceCameraPos + i.viewDirWS;
+                float depthBufferValue = tex2D(_CameraDepthTexture, i.screenPos.xy / i.screenPos.w).r;
+                float bufferEyeDepth = LinearEyeDepth(depthBufferValue);
+                float3 curPiexlDepthBufferWorldPos = _WorldSpaceCameraPos + (bufferEyeDepth / i.screenPos.w) * i.viewDirWS;
+                float depthDiff = curPixelWorldPos.y - curPiexlDepthBufferWorldPos.y;
+                float foam = depthDiff / _FoamDepth;
+                float2 noiseUV = i.uv.xy * _FoamNoiseTex_ST.xy + _FoamNoiseTex_ST.zw;
+                float noise = tex2D(_FoamNoiseTex, noiseUV + _Time.y * 0.1).r;
+                return step(foam,noise);
+            }
+
             fixed4 frag (v2f i) : SV_Target
             {
                 //Normal
@@ -200,9 +242,9 @@ Shader "Unlit/Water"
                 float NDotV = saturate(dot(N, V));
                 float fresnel = FresnelSchlick(NDotV, 0.04);
                 float3 refractColor = GetRefractColor(i, 1 - fresnel, normalTS);
-                return float4(GetReflectColor(i, N, H, 1), 1);
                 float3 reflectColor = GetReflectColor(i, N, H, fresnel);
-                float3 finalColor = refractColor + reflectColor;
+                float foamMask = GetFoamMask(i);
+                float3 finalColor = lerp(refractColor + reflectColor, _FoamColor, foamMask);
                 return float4(finalColor, 1);
             }
             ENDCG
