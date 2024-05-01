@@ -29,7 +29,15 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _FoamNoiseTex:
         m_Texture: {fileID: 2800000, guid: e182ac5d3b797044fb29f3fa2acc3708, type: 3}
-        m_Scale: {x: 5, y: 5}
+        m_Scale: {x: 50, y: 50}
+        m_Offset: {x: 0, y: 0}
+    - _GerstnerDisplacementTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GerstnerNormalTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
@@ -57,7 +65,9 @@ Material:
     - _CausticsJitterScale: 3
     - _DeepWaterDistance: 83.93
     - _DeepWaterLerpPow: 0.12
-    - _FoamDepth: 3
+    - _FoamDepth: 1.97
+    - _GerstnerTextureSize: 512
+    - _GerstnerTiling: -0.8
     - _HorizontalFadeOutScreenBorderWidth: 0.003
     - _MaxDistance: 552.6
     - _MaxStep: 1200.15
@@ -73,7 +83,7 @@ Material:
     m_Colors:
     - _CausticsTilingAndSpeed: {r: 0.005, g: 0.005, b: 0, a: 0}
     - _DeepColor: {r: 0, g: 0.16981131, b: 0, a: 1}
-    - _FoamColor: {r: 0.5377358, g: 0.5377358, b: 0.5377358, a: 1}
+    - _FoamColor: {r: 0.5849056, g: 0.5849056, b: 0.5849056, a: 1}
     - _ShallowColor: {r: 0.014684939, g: 0.6226415, b: 0.37565914, a: 0.54509807}
     - _WaterSpeed: {r: 0.3, g: 0.15, b: 0.25, a: 0.33}
     - _WindSpeed: {r: 0.1, g: 0.1, b: 0, a: 0}

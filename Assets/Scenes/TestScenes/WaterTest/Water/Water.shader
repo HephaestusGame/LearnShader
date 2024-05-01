@@ -14,6 +14,14 @@ Shader "Unlit/Water"
         _DeepWaterLerpPow("Deep Water Lerp Pow", Range(0, 10)) = 1
         
         [Space(30)]
+        [Header(Gersnter Wave)]
+        [Space(5)]
+        _GerstnerDisplacementTex("Gerstner Displacement Texture", 2D) = "white" {}
+        _GerstnerNormalTex("Gerstner Normal Texture", 2D) = "bump" {}
+        _GerstnerTextureSize("Gerstner Texture Size", Float) = 256
+        _GerstnerTiling("Gerstner Tiling", Float) = 0.01
+        
+        [Space(30)]
         [Header(Caustics)]
         [Space(5)]
         _CausticsTex("Caustics Texture", 2D) = "black" {}
@@ -53,6 +61,7 @@ Shader "Unlit/Water"
         _FoamNoiseTex("Foam Noise Texture", 2D) = "white" {}
         _FoamDepth("Foam Depth", Float) = 3
         _FoamColor("Foam Color", Color) = (1, 1, 1, 1)
+        
     }
     SubShader
     {
@@ -122,6 +131,9 @@ Shader "Unlit/Water"
             float4 _FoamNoiseTex_ST;
             float4 _FoamColor;
             float _FoamDepth;
+
+            sampler2D _GerstnerDisplacementTex, _GerstnerNormalTex;
+            float _GerstnerTextureSize, _GerstnerTiling;
             
             float ViewSpaceDepthColorFactor(v2f i)
             {
@@ -194,6 +206,10 @@ Shader "Unlit/Water"
             v2f vert (appdata v)
             {
                 v2f o;
+                float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+                float3 displacement = tex2Dlod(_GerstnerDisplacementTex, float4(worldPos.xz / _GerstnerTextureSize * _GerstnerTiling, 0, 0)).xyz;
+                worldPos += displacement;
+                v.vertex.xyz = mul(unity_WorldToObject, float4(worldPos, 1)).xyz;
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv.xy = TRANSFORM_TEX(v.uv, _MainTex);
                 o.uv.zw = TRANSFORM_TEX(v.uv + _Time.y * _WindSpeed, _NoiseTex);
@@ -222,6 +238,7 @@ Shader "Unlit/Water"
 
             fixed4 frag (v2f i) : SV_Target
             {
+                float3 curPixelWorldPos = _WorldSpaceCameraPos + i.viewDirWS;
                 //Normal
                 float2 normalUV1 = i.normalUV.xy + _Time.y * _WaterSpeed.xy;
                 float2 normalUV2 = i.normalUV.zw + _Time.y * _WaterSpeed.zw;
@@ -233,6 +250,8 @@ Shader "Unlit/Water"
                 normalTS.xy *= _NormalScale;
                 normalTS = normalize(normalTS);
                 float3 worldNormal = normalize(UnityObjectToWorldNormal(i.normalOS));
+                float3 gerstnerNormal = tex2D(_GerstnerNormalTex, curPixelWorldPos.xz / _GerstnerTextureSize * _GerstnerTiling).xyz;
+                worldNormal = normalize(worldNormal + gerstnerNormal);
                 float3 worldTangent = normalize(UnityObjectToWorldNormal(i.tangentOS.xyz));
                 float3 worldBinormal = cross(worldNormal, worldTangent) * i.tangentOS.w;
                 float3 N = normalize(mul(normalTS, float3x3(worldTangent, worldBinormal, worldNormal)));

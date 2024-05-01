@@ -1,0 +1,51 @@
+#pragma kernel ComputeGerstnerWave
+#define UNITY_PI 3.14159274f
+RWTexture2D<float4> _GerstnerDisplacementTex;
+RWTexture2D<float4> _GerstnerNormalTex;
+
+int wavesNum;
+float time;
+StructuredBuffer<float4> gerstnerWavesBuffer;
+
+
+float3 GerstnerWave (float4 wave, float3 p, inout float3 tangent, inout float3 binormal) {
+    float steepness = wave.z;
+    float wavelength = wave.w;
+    float k = 2 * UNITY_PI / wavelength;
+    float c = sqrt(9.8 / k);
+    float2 d = normalize(wave.xy);
+    float f = k * (dot(d, p.xz) - c * time);
+    float a = steepness / k;
+
+    tangent += float3(
+        -d.x * d.x * (steepness * sin(f)),
+        d.x * (steepness * cos(f)),
+        -d.x * d.y * (steepness * sin(f))
+    );
+    binormal += float3(
+        -d.x * d.y * (steepness * sin(f)),
+        d.y * (steepness * cos(f)),
+        -d.y * d.y * (steepness * sin(f))
+    );
+    return float3(
+        d.x * (a * cos(f)),
+        a * sin(f),
+        d.y * (a * cos(f))
+    );
+}
+
+[numthreads(8,8,1)]
+void ComputeGerstnerWave (uint3 id : SV_DispatchThreadID)
+{
+    float3 gridPoint = float3(id.x, 0, id.y);
+    float3 tangent = float3(1, 0, 0);
+    float3 binormal = float3(0, 0, 1);
+
+    float3 displacement = 0;
+    for (int i = 0; i < wavesNum; i++) {
+        displacement += GerstnerWave(gerstnerWavesBuffer[i], gridPoint, tangent, binormal);
+    }
+    _GerstnerDisplacementTex[id.xy] = float4(displacement, 0);
+    float3 normal = normalize(cross(binormal, tangent));
+    _GerstnerNormalTex[id.xy] = float4(normal, 0);
+}
