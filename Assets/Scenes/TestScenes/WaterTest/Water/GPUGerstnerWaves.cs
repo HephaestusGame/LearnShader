@@ -8,6 +8,9 @@ using Random = UnityEngine.Random;
 
 public class GPUGerstnerWaves : MonoBehaviour
 {
+    [Range(0, 360)]
+    public float windDirection = 0;
+    public Vector2 steepnessRange;
     public float timescale = 1.0f;
     public float time = 0;
     public uint wavesNum = 16;
@@ -26,24 +29,37 @@ public class GPUGerstnerWaves : MonoBehaviour
     private int _GerstnerTextureSizeID = Shader.PropertyToID("_GerstnerTextureSize");
     private int _timeID = Shader.PropertyToID("time");
     
+    private int _previousWavesNum = 0;
+
+    private bool _bufferUpdated = true;
     private void Update()
     {
         if (computeShader == null)
             return;
+
+        if (_previousWavesNum != wavesNum)
+        {
+            _previousWavesNum = (int)wavesNum;
+            RegenerateWaves();
+        }
 
         GetRT(ref displacementRT);
         GetRT(ref normalRT);
         int kernelID = computeShader.FindKernel("ComputeGerstnerWave");
         if (_wavesBuffer == null)
         {
-            _wavesBuffer = new ComputeBuffer((int)wavesNum, sizeof(float) * 4);
+            _wavesBuffer = new ComputeBuffer((int)_realWavesNum, sizeof(float) * 4);
         }
         time += Time.deltaTime * timescale;
 
-        _wavesBuffer.SetData(waves);
-        computeShader.SetBuffer(kernelID, _wavesBufferID, _wavesBuffer);
+        if (_bufferUpdated)
+        {
+            _bufferUpdated = false;
+            _wavesBuffer.SetData(waves);
+            computeShader.SetBuffer(kernelID, _wavesBufferID, _wavesBuffer);
+        }
         computeShader.SetFloat(_timeID, time);
-        computeShader.SetInt(_wavesNumID, (int)wavesNum);
+        computeShader.SetInt(_wavesNumID, (int)_realWavesNum);
         computeShader.SetTexture(kernelID, _displacementTextureID, displacementRT);
         computeShader.SetTexture(kernelID, _normalTextureID, normalRT);
         computeShader.Dispatch(kernelID, textureSize / 8, textureSize / 8, 1);
@@ -56,6 +72,7 @@ public class GPUGerstnerWaves : MonoBehaviour
             waterMaterial.SetFloat(_GerstnerTextureSizeID, textureSize);
         }
     }
+
 
     private void GetRT(ref RenderTexture rt)
     {
@@ -73,19 +90,29 @@ public class GPUGerstnerWaves : MonoBehaviour
     
     [SerializeField]
     private ComputeBuffer _wavesBuffer;
+    private int _realWavesNum = 0;
     [Button]
     public void RegenerateWaves()
     {
-        _wavesBuffer = new ComputeBuffer((int)wavesNum, sizeof(float) * 4);
-        waves = new Vector4[wavesNum];
+        _bufferUpdated = true;
+        int directionNum = 12;
+        _realWavesNum = (int)wavesNum * directionNum;
+        _wavesBuffer = new ComputeBuffer((int)_realWavesNum, sizeof(float) * 4);
+        waves = new Vector4[_realWavesNum];
+        float baseAngle = windDirection * Mathf.Deg2Rad; 
         for (int i = 0; i < wavesNum; i++)
         {
-            Vector2 dir = Random.insideUnitCircle.normalized;
-            float steepness = Random.Range(0.001f, .5f);
-
-            int waveLengthDivide = Mathf.CeilToInt(Random.Range(0.1f, textureSize));
-            float waveLength = textureSize / waveLengthDivide;
-            waves[i] = new Vector4(dir.x, dir.y, steepness, waveLength);
+            float angle = baseAngle + i * Mathf.PI / wavesNum;
+            float steepness = Random.Range(steepnessRange.x, steepnessRange.y);
+            float waveLength = (float)(textureSize * (i + 1)) / wavesNum  * (0.25f + Random.Range(-0.05f, 0.05f));
+            for (int j = 0; j < directionNum; j++)
+            {
+                Vector2 dir = Vector2.one;
+                angle += Mathf.PI * 0.5f / directionNum  + Mathf.PI * 0.5f / 360  * Random.Range(-30, 30);
+                dir.x = Mathf.Cos(angle);
+                dir.y = Mathf.Sin(angle);
+                waves[i * directionNum + j] = new Vector4(dir.x, dir.y, steepness, waveLength);
+            }
         }
     }
 }

@@ -144,6 +144,7 @@ float3 SSR(sampler2D screenTex, sampler2D cameraDepthTex, float3 viewDirWS, floa
         if (reflectEyeDepth > curStepEyeDepth + 0.03 && reflectEyeDepth < curStepEyeDepth + _Thickness)
         {
             float3 reflectColor = tex2D(screenTex, hitUV).rgb;
+            return reflectColor;
             float fade = GetFadeOutAlpha(hitUV, reflectPosWS.y, curPixelWaterPlaneHeight);
             return fade * reflectColor  + (1 - fade) * skyColor;
         }

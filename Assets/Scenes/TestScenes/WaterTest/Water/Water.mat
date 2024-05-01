@@ -67,15 +67,17 @@ Material:
     - _DeepWaterLerpPow: 0.12
     - _FoamDepth: 1.97
     - _GerstnerTextureSize: 512
-    - _GerstnerTiling: -0.8
+    - _GerstnerTiling: 1
     - _HorizontalFadeOutScreenBorderWidth: 0.003
     - _MaxDistance: 552.6
-    - _MaxStep: 1200.15
+    - _MaxStep: 1200
     - _NoiseIntensity: 0.01
-    - _NormalScale: 1.1
+    - _NormalScale: 0
     - _RefractionStrength: 8.42
+    - _ShowFresnel: 0
+    - _ShowNormalWS: 0
     - _SpecularGloss: 100
-    - _StepSize: 0.48
+    - _StepSize: 0.5
     - _StretchIntensity: 0
     - _StretchThreshold: 0.471
     - _Thickness: 6

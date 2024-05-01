@@ -3,6 +3,14 @@ Shader "Unlit/Water"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        
+        [Space(30)]
+        [Header(Debug)]
+        [Space(5)]
+        [Toggle(SHOW_FRESNEL)] _ShowFresnel("Show Fresnel", Float) = 1
+        [Toggle(SHOW_NORMAL_WS)] _ShowNormalWS("Show World Space Normal", Float) = 1
+
+        
         _SpecularGloss("Specular Gloss", Range(0, 100)) = 10
         _WaterSpeed("Water Speed", Vector) = (1, 1, 1, 1)
         _RefractionStrength("Refraction Strength", Range(0, 10)) = 0.5
@@ -17,7 +25,7 @@ Shader "Unlit/Water"
         [Header(Gersnter Wave)]
         [Space(5)]
         _GerstnerDisplacementTex("Gerstner Displacement Texture", 2D) = "white" {}
-        _GerstnerNormalTex("Gerstner Normal Texture", 2D) = "bump" {}
+        _GerstnerNormalTex("Gerstner Normal Texture", 2D) = "black" {}
         _GerstnerTextureSize("Gerstner Texture Size", Float) = 256
         _GerstnerTiling("Gerstner Tiling", Float) = 0.01
         
@@ -62,6 +70,8 @@ Shader "Unlit/Water"
         _FoamDepth("Foam Depth", Float) = 3
         _FoamColor("Foam Color", Color) = (1, 1, 1, 1)
         
+        
+        
     }
     SubShader
     {
@@ -82,6 +92,9 @@ Shader "Unlit/Water"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
+            #pragma multi_compile_local _ SHOW_FRESNEL
+            #pragma multi_compile_local _ SHOW_NORMAL_WS
+            
             #include "UnityCG.cginc"
             #include "Lighting.cginc"
             #include "WaterSSR.cginc"
@@ -163,7 +176,7 @@ Shader "Unlit/Water"
                     return 0;
                 float3 curPixelWorldPos = _WorldSpaceCameraPos + i.viewDirWS;
 
-                float2 uvOffset = normal.xy * _RefractionStrength;
+                float2 uvOffset = normal.xz * _RefractionStrength;
                 uvOffset.y *= _CameraDepthTexture_TexelSize.z * abs(_CameraDepthTexture_TexelSize.y);
                 float2 uv = (i.screenPos.xy + uvOffset) / i.screenPos.w;
 
@@ -207,7 +220,8 @@ Shader "Unlit/Water"
             {
                 v2f o;
                 float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
-                float3 displacement = tex2Dlod(_GerstnerDisplacementTex, float4(worldPos.xz / _GerstnerTextureSize * _GerstnerTiling, 0, 0)).xyz;
+                // float3 displacement = tex2Dlod(_GerstnerDisplacementTex, float4(worldPos.xz / _GerstnerTextureSize * _GerstnerTiling, 0, 0)).xyz;
+                float3 displacement = tex2Dlod(_GerstnerDisplacementTex, float4(v.uv, 0, 0)).xyz;
                 worldPos += displacement;
                 v.vertex.xyz = mul(unity_WorldToObject, float4(worldPos, 1)).xyz;
                 o.vertex = UnityObjectToClipPos(v.vertex);
@@ -238,7 +252,6 @@ Shader "Unlit/Water"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                float3 curPixelWorldPos = _WorldSpaceCameraPos + i.viewDirWS;
                 //Normal
                 float2 normalUV1 = i.normalUV.xy + _Time.y * _WaterSpeed.xy;
                 float2 normalUV2 = i.normalUV.zw + _Time.y * _WaterSpeed.zw;
@@ -249,19 +262,27 @@ Shader "Unlit/Water"
                 float3 normalTS = normal0 + normal1;
                 normalTS.xy *= _NormalScale;
                 normalTS = normalize(normalTS);
-                float3 worldNormal = normalize(UnityObjectToWorldNormal(i.normalOS));
-                float3 gerstnerNormal = tex2D(_GerstnerNormalTex, curPixelWorldPos.xz / _GerstnerTextureSize * _GerstnerTiling).xyz;
-                worldNormal = normalize(worldNormal + gerstnerNormal);
+                float3 worldNormal = tex2D(_GerstnerNormalTex, i.uv.xy).xyz;
                 float3 worldTangent = normalize(UnityObjectToWorldNormal(i.tangentOS.xyz));
                 float3 worldBinormal = cross(worldNormal, worldTangent) * i.tangentOS.w;
                 float3 N = normalize(mul(normalTS, float3x3(worldTangent, worldBinormal, worldNormal)));
+
+                #if defined(SHOW_NORMAL_WS)
+                    return float4(N , 1);
+                #endif
+                
                 float3 V = normalize(-i.viewDirWS);
                 float3 L = _WorldSpaceLightPos0;
                 float3 H = normalize(V + L);
                 float NDotV = saturate(dot(N, V));
                 float fresnel = FresnelSchlick(NDotV, 0.04);
-                float3 refractColor = GetRefractColor(i, 1 - fresnel, normalTS);
+                #if defined(SHOW_FRESNEL)
+                    return fresnel;
+                #endif
+                
+                float3 refractColor = GetRefractColor(i, 1 - fresnel, N);
                 float3 reflectColor = GetReflectColor(i, N, H, fresnel);
+                // return float4(reflectColor, 1);
                 float foamMask = GetFoamMask(i);
                 float3 finalColor = lerp(refractColor + reflectColor, _FoamColor, foamMask);
                 return float4(finalColor, 1);
