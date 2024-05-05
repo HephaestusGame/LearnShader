@@ -95,20 +95,20 @@ public class GPUGerstnerWaves : MonoBehaviour
     public void RegenerateWaves()
     {
         _bufferUpdated = true;
-        int directionNum = 12;
+        int directionNum = 18;
         _realWavesNum = (int)wavesNum * directionNum;
         _wavesBuffer = new ComputeBuffer((int)_realWavesNum, sizeof(float) * 4);
         waves = new Vector4[_realWavesNum];
         float baseAngle = windDirection * Mathf.Deg2Rad; 
         for (int i = 0; i < wavesNum; i++)
         {
-            float angle = baseAngle + i * Mathf.PI / wavesNum;
+            float angle = baseAngle + i * Mathf.PI * 0.8f / wavesNum;
             float steepness = Random.Range(steepnessRange.x, steepnessRange.y);
             float waveLength = (float)(textureSize * (i + 1)) / wavesNum  * (0.25f + Random.Range(-0.05f, 0.05f));
             for (int j = 0; j < directionNum; j++)
             {
                 Vector2 dir = Vector2.one;
-                angle += Mathf.PI * 0.5f / directionNum  + Mathf.PI * 0.5f / 360  * Random.Range(-30, 30);
+                angle += Mathf.PI  / directionNum  + Mathf.PI  / 360  * Random.Range(-40, 40);
                 dir.x = Mathf.Cos(angle);
                 dir.y = Mathf.Sin(angle);
                 waves[i * directionNum + j] = new Vector4(dir.x, dir.y, steepness, waveLength);
