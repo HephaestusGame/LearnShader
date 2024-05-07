@@ -72,8 +72,7 @@ namespace HephaestusGame
             return true;
         }
 
-        [Button]
-        public void CreateSampleCamera()
+        private void CreateSampleCamera()
         {
             if (waterPlane == null)
                 return;
@@ -86,17 +85,6 @@ namespace HephaestusGame
             _interactiveSampleCamera = cameraGO.AddComponent<InteractiveSampleCamera>();
             Bounds bounds = waterPlane.bounds;
             _interactiveSampleCamera.Init(bounds.size.x, bounds.size.z, waterDepth, forceFactor, _liquidParams, heightMapSize, forceShader, waveEquationShader, generateNormalShader);
-        }
-
-        [Button]
-        public void WaterPlaneBoundsInfo()
-        {
-            if (waterPlane == null)
-                return;
-            
-            Bounds bounds = waterPlane.bounds;
-            Debug.Log("Size: " + bounds.size);
-            Debug.Log("Center: " + bounds.center);
         }
     }
 }

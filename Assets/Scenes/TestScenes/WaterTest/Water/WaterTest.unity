@@ -577,8 +577,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1110834689}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.07144761, y: -0.92840195, z: 0.24977681, w: -0.26566255}
-  m_LocalPosition: {x: 278.0172, y: 342.62854, z: 931.93146}
+  m_LocalRotation: {x: -0.20009628, y: -0.7392699, z: 0.24761264, w: -0.59340507}
+  m_LocalPosition: {x: 485.1048, y: 141.82709, z: 601.3259}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -596,7 +596,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9456fb151e8346c0927a9a914936933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactiveMeshSize: 60
+  interactiveMeshSize: 6
   interactiveMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   waterPlane: {fileID: 1305999197}
 --- !u!1 &1305999197
@@ -723,11 +723,11 @@ MonoBehaviour:
   waveEquationShader: {fileID: 4800000, guid: ce66698994eaa422987c33cb8e5dcef0, type: 3}
   generateNormalShader: {fileID: 4800000, guid: aca813d8dcbf145c2b4ddccc60007456, type: 3}
   waterPlane: {fileID: 1305999199}
-  viscosity: 0.1
-  speed: 0.565
+  viscosity: 0.015
+  speed: 0.6
   forceFactor: 1
   waterDepth: 100
-  heightMapSize: 256
+  heightMapSize: 1024
 --- !u!114 &1305999203
 MonoBehaviour:
   m_ObjectHideFlags: 0

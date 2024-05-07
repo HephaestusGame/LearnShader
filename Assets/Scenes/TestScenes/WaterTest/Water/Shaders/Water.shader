@@ -239,7 +239,6 @@ Shader "Unlit/Water"
                 
                 worldPos += displacement;
                 v.vertex.xyz = mul(unity_WorldToObject, float4(worldPos, 1)).xyz;
-                // v.vertex.xyz += DecodeHeight(tex2Dlod(_InteractiveWaterHeightMap, float4(v.uv, 0, 0))) * 100;
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv.xy = TRANSFORM_TEX(v.uv, _MainTex);
                 o.uv.zw = TRANSFORM_TEX(v.uv + _Time.y * _WindSpeed, _NoiseTex);

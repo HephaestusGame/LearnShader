@@ -8,7 +8,6 @@ Shader "Unlit/WaveEquation"
     }
     SubShader
     {
-        
         Cull Off ZWrite Off ZTest Always
         Pass
         {
@@ -31,8 +30,9 @@ Shader "Unlit/WaveEquation"
 
             sampler2D _MainTex;
             sampler2D _PreTex;
+            float4 _WaveParams;
 
-            half4 _WaveParams;
+            
             v2f vert (appdata v)
             {
                 v2f o;
@@ -52,7 +52,7 @@ Shader "Unlit/WaveEquation"
                 float avg = _WaveParams.z * (left + right + top + bottom);
 
                 cur += pre + avg;
-                cur *= 0.98;
+                cur *= 0.96;
                 return EncodeHeight(cur);
             }
             ENDCG

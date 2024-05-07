@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -17,17 +18,28 @@ namespace HephaestusGame
         
         public RenderTexture _curTexture;
         public RenderTexture _preTexture;
+        public RenderTexture _nextTexture;
         public RenderTexture _heightMap;
         public RenderTexture _normalMap;
-        
+
+        private Mesh _mesh;
         public void DrawMesh(Mesh mesh, Matrix4x4 matrix)
         {
             if (!mesh)
                 return;
             _commandBuffer.DrawMesh(mesh, matrix, _forceMaterial);
+            _mesh = mesh;
         }
 
-        
+        // private void Update()
+        // {
+        //     if (_mesh)
+        //     {
+        //         Matrix4x4 matrix = Matrix4x4.TRS(transform.position + new Vector3(100, 0, 0), Quaternion.identity, Vector3.one * 20);
+        //         _commandBuffer.DrawMesh(_mesh, matrix, _generateNormalMaterial);
+        //     }
+        // }
+
         public void Init(
             float width, float height, float depth, float forceFactor, Vector4 waveParams, int texSize,
             Shader forceShader, Shader waveEquationShader, Shader generateNormalShader)
@@ -50,24 +62,20 @@ namespace HephaestusGame
             _camera.AddCommandBuffer(CameraEvent.AfterImageEffectsOpaque, _commandBuffer);
             _forceMaterial = new Material(forceShader);
 
-            _curTexture = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
+            RenderTextureReadWrite readWrite = RenderTextureReadWrite.Linear;
+            _curTexture = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, readWrite);
             _curTexture.name = "CurTexture";
-            _preTexture = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
+            _preTexture = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, readWrite);
             _preTexture.name = "PreTexture";
-            _heightMap = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
+            _nextTexture = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, readWrite);
+            _nextTexture.name = "NextTexture";
+            _heightMap = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, readWrite);
             _heightMap.name = "HeightMap";
-            _normalMap = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
+            _normalMap = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, readWrite);
             _normalMap.name = "NormalMap";
             // _normalMap.anisoLevel = 1;
 
-            RenderTexture tmp = RenderTexture.active;
-            RenderTexture.active = _curTexture;
-            GL.Clear(false, true, new Color(0, 0, 0, 0));
-            RenderTexture.active = _preTexture;
-            GL.Clear(false, true, new Color(0, 0, 0, 0));
-            RenderTexture.active = _heightMap;
-            GL.Clear(false, true, new Color(0, 0, 0, 0));
-            RenderTexture.active = tmp;
+            ClearRT();
 
             _camera.targetTexture = _curTexture;
             Shader.SetGlobalFloat("_InternalForce", forceFactor);
@@ -77,25 +85,46 @@ namespace HephaestusGame
             _generateNormalMaterial = new Material(generateNormalShader);
         }
 
+        [Button]
+        private void ClearRT()
+        {
+            RenderTexture tmp = RenderTexture.active;
+            RenderTexture.active = _curTexture;
+            GL.Clear(false, true, new Color(0, 0, 0, 0));
+            RenderTexture.active = _preTexture;
+            GL.Clear(false, true, new Color(0, 0, 0, 0));
+            RenderTexture.active = _heightMap;
+            GL.Clear(false, true, new Color(0, 0, 0, 0));
+            RenderTexture.active = tmp;
+        }
+
+        /// <summary>
+        /// 在CameraEvent.AfterImageEffectsOpaque之后执行
+        /// </summary>
         private void OnPostRender()
         {
             _commandBuffer.Clear();
+            // _commandBuffer.SetRenderTarget(_curTexture);
             _commandBuffer.ClearRenderTarget(true, false, Color.black);
-            _commandBuffer.SetRenderTarget(_curTexture);
             
+            _waveEquationMaterial.SetTexture("_PreTex", _preTexture);
+            _commandBuffer.Blit(_curTexture, _heightMap, _waveEquationMaterial);
+            _commandBuffer.Blit(_heightMap, _normalMap, _generateNormalMaterial);
+            _commandBuffer.Blit(_curTexture, _preTexture);
+            _commandBuffer.Blit(_heightMap, _curTexture);
+
             Shader.SetGlobalTexture("_InteractiveWaterHeightMap", _heightMap);
             Shader.SetGlobalTexture("_InteractiveWaterNormalMap", _normalMap);
         }
         
-        private void OnRenderImage(RenderTexture source, RenderTexture destination)
-        {
-            _waveEquationMaterial.SetTexture("_PreTex", _preTexture);
-            
-            Graphics.Blit(source, destination, _waveEquationMaterial);
-            Graphics.Blit(destination, _heightMap);
-            Graphics.Blit(_heightMap, _normalMap, _generateNormalMaterial);
-            Graphics.Blit(source, _preTexture);
-        }
+        // private void OnRenderImage(RenderTexture source, RenderTexture destination)
+        // {
+        //     _waveEquationMaterial.SetTexture("_PreTex", _preTexture);
+        //     Graphics.Blit(source, destination, _waveEquationMaterial);
+        //     Graphics.Blit(destination, _heightMap);
+        //     Graphics.Blit(_heightMap, _normalMap, _generateNormalMaterial);
+        //     Graphics.Blit(source, _preTexture);
+        // }
 
         private void OnDestroy()
         {

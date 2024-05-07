@@ -47,25 +47,25 @@ Shader "Unlit/InteractiveWaterForce"
             ENDCG
         }
 
-        //全部浸入的物体，深度为固定值，用于模拟全部浸入后产生水波强度不变
-        Pass
-        {
-            CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
-
-			#include "UnityCG.cginc"
-
-			float4 vert(float4 vertex:POSITION) : SV_POSITION
-			{
-				return UnityObjectToClipPos(vertex);
-			}
-
-			fixed4 frag(float4 i:SV_POSITION) : SV_Target
-			{
-				return fixed4(0, 0, 0, 1.0);
-			}
-			ENDCG
-        }
+//        //全部浸入的物体，深度为固定值，用于模拟全部浸入后产生水波强度不变
+//        Pass
+//        {
+//            CGPROGRAM
+//			#pragma vertex vert
+//			#pragma fragment frag
+//
+//			#include "UnityCG.cginc"
+//
+//			float4 vert(float4 vertex:POSITION) : SV_POSITION
+//			{
+//				return UnityObjectToClipPos(vertex);
+//			}
+//
+//			fixed4 frag(float4 i:SV_POSITION) : SV_Target
+//			{
+//				return fixed4(0, 0, 0, 1.0);
+//			}
+//			ENDCG
+//        }
     }
 }
