@@ -57,10 +57,14 @@ float3 SSR(sampler2D screenTex, sampler2D cameraDepthTex, float3 viewDirWS, floa
 
     float3 normalVS = mul(unity_WorldToCamera, float4(normalWS, 0)).xyz;
     normalVS.z *= -1;
-
+    
 
     viewDirWS = normalize(viewDirWS);
     float3 reflectWS = reflect(viewDirWS, normalWS);
+    float3 skyColor = SampleSky(reflectWS);
+    #ifndef ENABLE_SSR
+        return skyColor;
+    #endif
     float3 reflectDirVS = normalize(reflect(viewDirVS, normalVS));
     float magnitude = _MaxDistance;
     float endZ = curPixelPosVS.z + reflectDirVS.z * magnitude;
@@ -110,7 +114,6 @@ float3 SSR(sampler2D screenTex, sampler2D cameraDepthTex, float3 viewDirWS, floa
 
     float endX = endScreen.x * dir;
 
-    float3 skyColor = SampleSky(reflectWS);
 
     float startPosEyeDepth = -curPixelPosVS.z;
     float endPosEyeDepth = -endPosVS.z;

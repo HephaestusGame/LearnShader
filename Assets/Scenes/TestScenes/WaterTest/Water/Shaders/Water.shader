@@ -24,10 +24,16 @@ Shader "Unlit/Water"
         [Space(30)]
         [Header(Gersnter Wave)]
         [Space(5)]
-        _GerstnerDisplacementTex("Gerstner Displacement Texture", 2D) = "white" {}
+        _GerstnerDisplacementTex("Gerstner Displacement Texture", 2D) = "black" {}
         _GerstnerNormalTex("Gerstner Normal Texture", 2D) = "black" {}
         _GerstnerTextureSize("Gerstner Texture Size", Float) = 256
         _GerstnerTiling("Gerstner Tiling", Float) = 0.01
+        
+//        [Space(30)]
+//        [Header(Interaction)]
+//        [Space(5)]
+//        _InteractiveWaterHeightMap("Interactive Water Height Map", 2D) = "black" {}
+//        _InteractiveWaterNormalMap("Interactive Water Normal Map", 2D) = "black" {}
         
         [Space(30)]
         [Header(Caustics)]
@@ -47,13 +53,14 @@ Shader "Unlit/Water"
         [Space(30)]
         [Header(Normal)]
         [Space(5)]
-        _NormalTex_0("Normal Texture 0", 2D) = "bump" {}
-        _NormalTex_1("Normal Texture 1", 2D) = "bump" {}
+        _NormalTex_0("Normal Texture 0", 2D) = "black" {}
+        _NormalTex_1("Normal Texture 1", 2D) = "black" {}
         _NormalScale("Normal Scale", Float) = 1
         
         [Space(30)]
         [Header(SSR)]
         [Space(5)]
+        [Toggle(ENABLE_SSR)] _EnableSSR("Enable SSR", Float) = 0
         _MaxStep("MaxStep",Float) = 10
         _StepSize("StepSize", Float) = 1
         _MaxDistance("MaxDistance",Float) = 10
@@ -94,10 +101,12 @@ Shader "Unlit/Water"
             #pragma fragment frag
             #pragma multi_compile_local _ SHOW_FRESNEL
             #pragma multi_compile_local _ SHOW_NORMAL_WS
+            #pragma multi_compile_local _ ENABLE_SSR
             
             #include "UnityCG.cginc"
             #include "Lighting.cginc"
             #include "WaterSSR.cginc"
+            #include "InteractiveWaterUtils.cginc"
 
             struct appdata
             {
@@ -147,6 +156,8 @@ Shader "Unlit/Water"
 
             sampler2D _GerstnerDisplacementTex, _GerstnerNormalTex;
             float _GerstnerTextureSize, _GerstnerTiling;
+
+            sampler2D _InteractiveWaterNormalMap, _InteractiveWaterHeightMap;
             
             float ViewSpaceDepthColorFactor(v2f i)
             {
@@ -220,10 +231,15 @@ Shader "Unlit/Water"
             {
                 v2f o;
                 float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+                //Gersnter Wave位移
                 // float3 displacement = tex2Dlod(_GerstnerDisplacementTex, float4(worldPos.xz / _GerstnerTextureSize * _GerstnerTiling, 0, 0)).xyz;
                 float3 displacement = tex2Dlod(_GerstnerDisplacementTex, float4(v.uv, 0, 0)).xyz;
+                //波动方程交互位移
+                displacement.y += DecodeHeight(tex2Dlod(_InteractiveWaterHeightMap, float4(v.uv, 0, 0))) * 100;
+                
                 worldPos += displacement;
                 v.vertex.xyz = mul(unity_WorldToObject, float4(worldPos, 1)).xyz;
+                // v.vertex.xyz += DecodeHeight(tex2Dlod(_InteractiveWaterHeightMap, float4(v.uv, 0, 0))) * 100;
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv.xy = TRANSFORM_TEX(v.uv, _MainTex);
                 o.uv.zw = TRANSFORM_TEX(v.uv + _Time.y * _WindSpeed, _NoiseTex);
@@ -261,8 +277,14 @@ Shader "Unlit/Water"
                 float3 normal1 = UnpackNormal(tex2D(_NormalTex_1, normalUV2 + noise));
                 float3 normalTS = normal0 + normal1;
                 normalTS.xy *= _NormalScale;
+
+
+                float3 waveEquationNormal = UnpackNormal(tex2D(_InteractiveWaterNormalMap, i.uv.xy));
+                normalTS += waveEquationNormal;
+                
                 normalTS = normalize(normalTS);
                 float3 worldNormal = tex2D(_GerstnerNormalTex, i.uv.xy).xyz;
+                worldNormal = float3(0, 1, 0);
                 float3 worldTangent = normalize(UnityObjectToWorldNormal(i.tangentOS.xyz));
                 float3 worldBinormal = cross(worldNormal, worldTangent) * i.tangentOS.w;
                 float3 N = normalize(mul(normalTS, float3x3(worldTangent, worldBinormal, worldNormal)));
