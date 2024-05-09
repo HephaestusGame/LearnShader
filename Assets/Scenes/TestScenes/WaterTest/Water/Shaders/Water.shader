@@ -72,6 +72,7 @@ Shader "Unlit/Water"
         [Space(30)]
         [Header(Foam)]
         [Space(5)]
+        [Toggle(ENABLE_FOAM)] _EnableFoam("Enable Foam", Float) = 0
         _FoamTex("Foam Texture", 2D) = "white" {}
         _FoamNoiseTex("Foam Noise Texture", 2D) = "white" {}
         _FoamDepth("Foam Depth", Float) = 3
@@ -84,9 +85,11 @@ Shader "Unlit/Water"
     }
     SubShader
     {
-        Tags { 
+        Tags 
+        { 
             "RenderType" = "Transparent" 
             "Queue" = "Transparent"
+            "LightMode"="ForwardBase"
         }
         
         GrabPass
@@ -106,6 +109,8 @@ Shader "Unlit/Water"
             #pragma multi_compile_local _ ENABLE_SSR
             #pragma multi_compile_local _ ENABLE_GERSTNER_WAVE
             #pragma multi_compile_local _ USE_WORLD_SPACE_DEPTH_DIFFERENCE
+            #pragma multi_compile_local _ ENABLE_FOAM
+            #pragma multi_compile_fwdbase
             
             #include "UnityCG.cginc"
             #include "Lighting.cginc"
@@ -117,7 +122,7 @@ Shader "Unlit/Water"
 
             struct appdata
             {
-                float4 vertex : POSITION;
+                float4 vertex : POSITION;//使用内置阴影的话，这里的变量名必须是vertex
                 float4 tangent : TANGENT;
                 float4 normal : NORMAL;
                 float2 uv : TEXCOORD0;
@@ -125,7 +130,7 @@ Shader "Unlit/Water"
 
             struct v2f
             {
-                float4 vertex : SV_POSITION;
+                float4 pos : SV_POSITION;//使用内置阴影的话，这里的变量名必须是pos
                 float4 uv : TEXCOORD0;
                 float4 screenPos : TEXCOORD1;
                 float3 viewDirWS : TEXCOORD2;
@@ -206,7 +211,7 @@ Shader "Unlit/Water"
                 float3 curPixelWorldPos = _WorldSpaceCameraPos + i.viewDirWS;
                 
                 //specular
-                float shadow = UNITY_SHADOW_ATTENUATION(i, curPixelWorldPos);
+                float shadow = SHADOW_ATTENUATION(i);
                 float NDotH = saturate(dot(N, H));
                 float3 specular = _LightColor0 * pow(NDotH, _SpecularGloss) * _SpecularIntensity * shadow;
 
@@ -231,10 +236,10 @@ Shader "Unlit/Water"
                 
                 worldPos += displacement;
                 v.vertex.xyz = mul(unity_WorldToObject, float4(worldPos, 1)).xyz;
-                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv.xy = TRANSFORM_TEX(v.uv, _MainTex);
                 o.uv.zw = TRANSFORM_TEX(v.uv + _Time.y * _WindSpeed, _NoiseTex);
-                o.screenPos = ComputeScreenPos(o.vertex);
+                o.screenPos = ComputeScreenPos(o.pos);
                 float3 posWS = mul(unity_ObjectToWorld, v.vertex).xyz;
                 o.viewDirWS = posWS - _WorldSpaceCameraPos;//这里是摄像机到顶点的向量，用于重建世界坐标
 
@@ -290,9 +295,12 @@ Shader "Unlit/Water"
                 float3 refractColor = GetRefractColor(i, 1 - fresnel, N);
                 float3 reflectColor = GetReflectColor(i, N, H, fresnel);
                 // return float4(reflectColor, 1);
-                float foamMask = GetFoamMask(i.uv, i.screenPos, i.viewDirWS, N);
-                float3 finalColor = lerp(refractColor + reflectColor, _FoamColor, foamMask);
-                return float4(finalColor, 1);
+                #if defined(ENABLE_FOAM)
+                    float foamMask = GetFoamMask(i.uv, i.screenPos, i.viewDirWS, N);
+                    float3 finalColor = lerp(refractColor + reflectColor, _FoamColor, foamMask);
+                    return float4(finalColor, 1);
+                #endif
+                return float4(refractColor + reflectColor, 1);
             }
             ENDCG
         }
