@@ -41,6 +41,8 @@ namespace HephaestusGame
             {
                 CreateSampleCamera();
             }
+
+            Application.targetFrameRate = 80;
         }
         
         private bool CalculateLiquidParams()
@@ -69,6 +71,9 @@ namespace HephaestusGame
             float k3 = 2 * cSquare * t * t / dSquare / muTPlus2;
 
             _liquidParams = new Vector4(k1, k2, k3, d);
+            Debug.Log($"fac {cSquare * t * t / dSquare}");
+            Debug.Log($"muTPlus2: {muTPlus2}");
+            Debug.Log($"k1:{k1} k2:{k2} k3:{k3} d: {d}");
             return true;
         }
 
@@ -85,6 +90,8 @@ namespace HephaestusGame
             _interactiveSampleCamera = cameraGO.AddComponent<InteractiveSampleCamera>();
             Bounds bounds = waterPlane.bounds;
             _interactiveSampleCamera.Init(bounds.size.x, bounds.size.z, waterDepth, forceFactor, _liquidParams, heightMapSize, forceShader, waveEquationShader, generateNormalShader);
+            
+            Shader.SetGlobalFloat("_InteractiveWaterMaxHeight", waterDepth);
         }
     }
 }

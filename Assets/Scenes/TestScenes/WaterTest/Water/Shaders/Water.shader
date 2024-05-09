@@ -29,9 +29,9 @@ Shader "Unlit/Water"
         _GerstnerTextureSize("Gerstner Texture Size", Float) = 256
         _GerstnerTiling("Gerstner Tiling", Float) = 0.01
         
-//        [Space(30)]
-//        [Header(Interaction)]
-//        [Space(5)]
+        [Space(30)]
+        [Header(Interaction)]
+        [Space(5)]
 //        _InteractiveWaterHeightMap("Interactive Water Height Map", 2D) = "black" {}
 //        _InteractiveWaterNormalMap("Interactive Water Normal Map", 2D) = "black" {}
         
@@ -158,6 +158,7 @@ Shader "Unlit/Water"
             float _GerstnerTextureSize, _GerstnerTiling;
 
             sampler2D _InteractiveWaterNormalMap, _InteractiveWaterHeightMap;
+            float _InteractiveWaterMaxHeight;
             
             float ViewSpaceDepthColorFactor(v2f i)
             {
@@ -232,10 +233,9 @@ Shader "Unlit/Water"
                 v2f o;
                 float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
                 //Gersnter Wave位移
-                // float3 displacement = tex2Dlod(_GerstnerDisplacementTex, float4(worldPos.xz / _GerstnerTextureSize * _GerstnerTiling, 0, 0)).xyz;
                 float3 displacement = tex2Dlod(_GerstnerDisplacementTex, float4(v.uv, 0, 0)).xyz;
                 //波动方程交互位移
-                displacement.y += DecodeHeight(tex2Dlod(_InteractiveWaterHeightMap, float4(v.uv, 0, 0))) * 100;
+                displacement.y += DecodeHeight(tex2Dlod(_InteractiveWaterHeightMap, float4(v.uv, 0, 0))) * _InteractiveWaterMaxHeight;
                 
                 worldPos += displacement;
                 v.vertex.xyz = mul(unity_WorldToObject, float4(worldPos, 1)).xyz;
@@ -283,7 +283,7 @@ Shader "Unlit/Water"
                 
                 normalTS = normalize(normalTS);
                 float3 worldNormal = tex2D(_GerstnerNormalTex, i.uv.xy).xyz;
-                worldNormal = float3(0, 1, 0);
+                // worldNormal = float3(0, 1, 0);
                 float3 worldTangent = normalize(UnityObjectToWorldNormal(i.tangentOS.xyz));
                 float3 worldBinormal = cross(worldNormal, worldTangent) * i.tangentOS.w;
                 float3 N = normalize(mul(normalTS, float3x3(worldTangent, worldBinormal, worldNormal)));

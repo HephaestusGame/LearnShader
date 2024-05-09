@@ -18,27 +18,15 @@ namespace HephaestusGame
         
         public RenderTexture _curTexture;
         public RenderTexture _preTexture;
-        public RenderTexture _nextTexture;
         public RenderTexture _heightMap;
         public RenderTexture _normalMap;
 
-        private Mesh _mesh;
         public void DrawMesh(Mesh mesh, Matrix4x4 matrix)
         {
             if (!mesh)
                 return;
             _commandBuffer.DrawMesh(mesh, matrix, _forceMaterial);
-            _mesh = mesh;
         }
-
-        // private void Update()
-        // {
-        //     if (_mesh)
-        //     {
-        //         Matrix4x4 matrix = Matrix4x4.TRS(transform.position + new Vector3(100, 0, 0), Quaternion.identity, Vector3.one * 20);
-        //         _commandBuffer.DrawMesh(_mesh, matrix, _generateNormalMaterial);
-        //     }
-        // }
 
         public void Init(
             float width, float height, float depth, float forceFactor, Vector4 waveParams, int texSize,
@@ -67,8 +55,6 @@ namespace HephaestusGame
             _curTexture.name = "CurTexture";
             _preTexture = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, readWrite);
             _preTexture.name = "PreTexture";
-            _nextTexture = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, readWrite);
-            _nextTexture.name = "NextTexture";
             _heightMap = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, readWrite);
             _heightMap.name = "HeightMap";
             _normalMap = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, readWrite);
@@ -104,7 +90,6 @@ namespace HephaestusGame
         private void OnPostRender()
         {
             _commandBuffer.Clear();
-            // _commandBuffer.SetRenderTarget(_curTexture);
             _commandBuffer.ClearRenderTarget(true, false, Color.black);
             
             _waveEquationMaterial.SetTexture("_PreTex", _preTexture);
@@ -113,18 +98,10 @@ namespace HephaestusGame
             _commandBuffer.Blit(_curTexture, _preTexture);
             _commandBuffer.Blit(_heightMap, _curTexture);
 
+
             Shader.SetGlobalTexture("_InteractiveWaterHeightMap", _heightMap);
             Shader.SetGlobalTexture("_InteractiveWaterNormalMap", _normalMap);
         }
-        
-        // private void OnRenderImage(RenderTexture source, RenderTexture destination)
-        // {
-        //     _waveEquationMaterial.SetTexture("_PreTex", _preTexture);
-        //     Graphics.Blit(source, destination, _waveEquationMaterial);
-        //     Graphics.Blit(destination, _heightMap);
-        //     Graphics.Blit(_heightMap, _normalMap, _generateNormalMaterial);
-        //     Graphics.Blit(source, _preTexture);
-        // }
 
         private void OnDestroy()
         {

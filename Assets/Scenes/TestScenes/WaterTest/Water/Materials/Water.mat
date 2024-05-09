@@ -11,7 +11,8 @@ Material:
   m_Shader: {fileID: 4800000, guid: 25a3c463ecf2b42a0aad6e8c7a41fd43, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - ENABLE_SSR
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -73,7 +74,7 @@ Material:
     - _CausticsJitterScale: 3
     - _DeepWaterDistance: 83.93
     - _DeepWaterLerpPow: 0.12
-    - _EnableSSR: 0
+    - _EnableSSR: 1
     - _FoamDepth: 7.5
     - _GerstnerTextureSize: 512
     - _GerstnerTiling: 1
@@ -81,7 +82,7 @@ Material:
     - _MaxDistance: 552.6
     - _MaxStep: 1200
     - _NoiseIntensity: 0.01
-    - _NormalScale: 0
+    - _NormalScale: 0.63
     - _RefractionStrength: 8.42
     - _ShowFresnel: 0
     - _ShowNormalWS: 0
