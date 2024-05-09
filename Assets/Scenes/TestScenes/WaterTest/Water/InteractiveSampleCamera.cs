@@ -72,12 +72,16 @@ namespace HephaestusGame
             RenderTextureReadWrite readWrite = RenderTextureReadWrite.Linear;
             curTexture = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, readWrite);
             curTexture.name = "CurTexture";
+            curTexture.filterMode = FilterMode.Trilinear;
             preTexture = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, readWrite);
             preTexture.name = "PreTexture";
+            preTexture.filterMode = FilterMode.Trilinear;
             heightMap = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, readWrite);
             heightMap.name = "HeightMap";
+            heightMap.filterMode = FilterMode.Trilinear;
             normalMap = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, readWrite);
             normalMap.name = "NormalMap";
+            normalMap.filterMode = FilterMode.Trilinear;
             // _normalMap.anisoLevel = 1;
 
             ClearRT();

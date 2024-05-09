@@ -30,7 +30,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _FoamNoiseTex:
         m_Texture: {fileID: 2800000, guid: e182ac5d3b797044fb29f3fa2acc3708, type: 3}
-        m_Scale: {x: 20, y: 20}
+        m_Scale: {x: 10, y: 10}
+        m_Offset: {x: 0, y: 0}
+    - _FoamTex:
+        m_Texture: {fileID: 2800000, guid: b7b82f4cb17d744a2ab2cea713fa61d5, type: 3}
+        m_Scale: {x: 50, y: 50}
         m_Offset: {x: 0, y: 0}
     - _GerstnerDisplacementTex:
         m_Texture: {fileID: 0}
@@ -62,11 +66,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _NormalTex_0:
         m_Texture: {fileID: 2800000, guid: 33a5819872dcf4d6d912cdb1067ab12b, type: 3}
-        m_Scale: {x: 8, y: 8}
+        m_Scale: {x: 4, y: 4}
         m_Offset: {x: 0, y: 0}
     - _NormalTex_1:
         m_Texture: {fileID: 2800000, guid: 33a5819872dcf4d6d912cdb1067ab12b, type: 3}
-        m_Scale: {x: 10, y: 10}
+        m_Scale: {x: 3.5, y: 3.8}
         m_Offset: {x: 0.31, y: 0}
     m_Ints: []
     m_Floats:
@@ -76,28 +80,36 @@ Material:
     - _DeepWaterLerpPow: 0.12
     - _EnableGerstnerWave: 0
     - _EnableSSR: 1
-    - _FoamDepth: 7.5
+    - _FoamDepth: 8
+    - _FoamEdgeChangeSpeed: 0.87
+    - _FoamFactor: 0
+    - _FoamFactor1: 0.117
+    - _FoamFactor2: 0.155
+    - _FoamSpeed: 8.11
+    - _FoamUVOffsetFactor: 0.419
     - _GerstnerTextureSize: 512
     - _GerstnerTiling: 1
     - _HorizontalFadeOutScreenBorderWidth: 0.003
     - _MaxDistance: 552.6
     - _MaxStep: 1200
     - _NoiseIntensity: 0.01
-    - _NormalScale: 0
+    - _NormalScale: 0.83
     - _RefractionStrength: 8.42
     - _ShowFresnel: 0
     - _ShowNormalWS: 0
-    - _SpecularGloss: 100
+    - _SpecularGloss: 500
+    - _SpecularIntensity: 5.3
     - _StepSize: 0.5
     - _StretchIntensity: 0
     - _StretchThreshold: 0.471
     - _Thickness: 6
+    - _UseWorldSpaceDepthDifference: 0
     - _VerticalFadeOutScreenBorderWidth: 0.225
     m_Colors:
     - _CausticsTilingAndSpeed: {r: 0.005, g: 0.005, b: 0, a: 0}
     - _DeepColor: {r: 0, g: 0.16981131, b: 0, a: 1}
     - _FoamColor: {r: 0.5849056, g: 0.5849056, b: 0.5849056, a: 1}
     - _ShallowColor: {r: 0.014684939, g: 0.6226415, b: 0.37565914, a: 0.54509807}
-    - _WaterSpeed: {r: 0.3, g: 0.15, b: 0.25, a: 0.33}
+    - _WaterSpeed: {r: 0.1, g: 0.1, b: 0.05, a: 0.12}
     - _WindSpeed: {r: 0.1, g: 0.1, b: 0, a: 0}
   m_BuildTextureStacks: []
