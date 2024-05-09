@@ -596,7 +596,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9456fb151e8346c0927a9a914936933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactiveMeshSize: 5
+  interactiveWidth: 8
+  interactiveMeshHeight: 0.5
+  interactiveInterval: 0
   interactiveMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   waterPlane: {fileID: 1305999197}
 --- !u!1 &1305999197
@@ -701,11 +703,11 @@ MonoBehaviour:
   waveEquationShader: {fileID: 4800000, guid: ce66698994eaa422987c33cb8e5dcef0, type: 3}
   generateNormalShader: {fileID: 4800000, guid: aca813d8dcbf145c2b4ddccc60007456, type: 3}
   waterPlane: {fileID: 1305999199}
-  viscosity: 0.15
-  speed: 0.5
+  viscosity: 0.5
+  speed: 0.8
   forceFactor: 1.5
   waterDepth: 100
-  heightMapSize: 256
+  heightMapSize: 1024
 --- !u!114 &1305999203
 MonoBehaviour:
   m_ObjectHideFlags: 0

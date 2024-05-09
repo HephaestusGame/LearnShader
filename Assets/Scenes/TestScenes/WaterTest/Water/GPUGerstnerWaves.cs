@@ -94,6 +94,10 @@ public class GPUGerstnerWaves : MonoBehaviour
     [Button]
     public void RegenerateWaves()
     {
+        if (_wavesBuffer != null)
+        {
+            _wavesBuffer.Release();
+        }
         _bufferUpdated = true;
         int directionNum = 18;
         _realWavesNum = (int)wavesNum * directionNum;
@@ -113,6 +117,14 @@ public class GPUGerstnerWaves : MonoBehaviour
                 dir.y = Mathf.Sin(angle);
                 waves[i * directionNum + j] = new Vector4(dir.x, dir.y, steepness, waveLength);
             }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (_wavesBuffer != null)
+        {
+            _wavesBuffer.Release();
         }
     }
 }

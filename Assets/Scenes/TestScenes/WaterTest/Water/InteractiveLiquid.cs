@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
@@ -71,10 +72,31 @@ namespace HephaestusGame
             float k3 = 2 * cSquare * t * t / dSquare / muTPlus2;
 
             _liquidParams = new Vector4(k1, k2, k3, d);
-            Debug.Log($"fac {cSquare * t * t / dSquare}");
-            Debug.Log($"muTPlus2: {muTPlus2}");
-            Debug.Log($"k1:{k1} k2:{k2} k3:{k3} d: {d}");
             return true;
+        }
+
+        private void Update()
+        {
+            if (_interactiveSampleCamera != null)
+            {
+                UpdateWaterParamsIfNeed();
+                _interactiveSampleCamera.UpdateForceFactor(forceFactor);
+            }
+        }
+
+        
+        private float _previousViscosity;
+        private float _previousSpeed;
+        private void UpdateWaterParamsIfNeed()
+        {
+            if (Math.Abs(viscosity - _previousViscosity) < Mathf.Epsilon && Math.Abs(speed - _previousSpeed) < Mathf.Epsilon)
+                return;
+            if (CalculateLiquidParams())
+            {
+                _previousViscosity = viscosity;
+                _previousSpeed = speed;
+                _interactiveSampleCamera.UpdateWaveParams(_liquidParams);
+            }
         }
 
         private void CreateSampleCamera()

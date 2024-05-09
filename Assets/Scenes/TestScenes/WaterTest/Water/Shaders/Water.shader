@@ -24,16 +24,12 @@ Shader "Unlit/Water"
         [Space(30)]
         [Header(Gersnter Wave)]
         [Space(5)]
+        [Toggle(ENABLE_GERSTNER_WAVE)] _EnableGerstnerWave("Enable Gerstner Wave", Float) = 0
         _GerstnerDisplacementTex("Gerstner Displacement Texture", 2D) = "black" {}
         _GerstnerNormalTex("Gerstner Normal Texture", 2D) = "black" {}
         _GerstnerTextureSize("Gerstner Texture Size", Float) = 256
         _GerstnerTiling("Gerstner Tiling", Float) = 0.01
         
-        [Space(30)]
-        [Header(Interaction)]
-        [Space(5)]
-//        _InteractiveWaterHeightMap("Interactive Water Height Map", 2D) = "black" {}
-//        _InteractiveWaterNormalMap("Interactive Water Normal Map", 2D) = "black" {}
         
         [Space(30)]
         [Header(Caustics)]
@@ -102,6 +98,7 @@ Shader "Unlit/Water"
             #pragma multi_compile_local _ SHOW_FRESNEL
             #pragma multi_compile_local _ SHOW_NORMAL_WS
             #pragma multi_compile_local _ ENABLE_SSR
+            #pragma multi_compile_local _ ENABLE_GERSTNER_WAVE
             
             #include "UnityCG.cginc"
             #include "Lighting.cginc"
@@ -232,8 +229,11 @@ Shader "Unlit/Water"
             {
                 v2f o;
                 float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
-                //Gersnter Wave位移
-                float3 displacement = tex2Dlod(_GerstnerDisplacementTex, float4(v.uv, 0, 0)).xyz;
+                float3 displacement = 0;
+                #if defined(ENABLE_GERSTNER_WAVE)
+                    //Gersnter Wave位移
+                    displacement += tex2Dlod(_GerstnerDisplacementTex, float4(v.uv, 0, 0)).xyz;
+                #endif
                 //波动方程交互位移
                 displacement.y += DecodeHeight(tex2Dlod(_InteractiveWaterHeightMap, float4(v.uv, 0, 0))) * _InteractiveWaterMaxHeight;
                 
@@ -282,8 +282,13 @@ Shader "Unlit/Water"
                 normalTS += waveEquationNormal;
                 
                 normalTS = normalize(normalTS);
-                float3 worldNormal = tex2D(_GerstnerNormalTex, i.uv.xy).xyz;
-                // worldNormal = float3(0, 1, 0);
+
+                #if defined(ENABLE_GERSTNER_WAVE)
+                    float3 worldNormal = tex2D(_GerstnerNormalTex, i.uv.xy).xyz;
+                #else
+                    float3 worldNormal = UnityObjectToWorldNormal(i.normalOS);
+                #endif
+                
                 float3 worldTangent = normalize(UnityObjectToWorldNormal(i.tangentOS.xyz));
                 float3 worldBinormal = cross(worldNormal, worldTangent) * i.tangentOS.w;
                 float3 N = normalize(mul(normalTS, float3x3(worldTangent, worldBinormal, worldNormal)));

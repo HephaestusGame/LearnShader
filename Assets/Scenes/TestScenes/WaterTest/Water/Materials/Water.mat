@@ -74,6 +74,7 @@ Material:
     - _CausticsJitterScale: 3
     - _DeepWaterDistance: 83.93
     - _DeepWaterLerpPow: 0.12
+    - _EnableGerstnerWave: 0
     - _EnableSSR: 1
     - _FoamDepth: 7.5
     - _GerstnerTextureSize: 512
@@ -82,7 +83,7 @@ Material:
     - _MaxDistance: 552.6
     - _MaxStep: 1200
     - _NoiseIntensity: 0.01
-    - _NormalScale: 0.63
+    - _NormalScale: 0
     - _RefractionStrength: 8.42
     - _ShowFresnel: 0
     - _ShowNormalWS: 0

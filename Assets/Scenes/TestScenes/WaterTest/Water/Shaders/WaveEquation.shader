@@ -52,7 +52,7 @@ Shader "Unlit/WaveEquation"
                 float avg = _WaveParams.z * (left + right + top + bottom);
 
                 cur += pre + avg;
-                cur *= 0.96;
+                cur *= 0.96;//用于让波动快速衰减，非物理(同时如果不用这个衰减，当粘度很低时，由于波动很难停下来，水面会比原来高（一直有波动）)
                 return EncodeHeight(cur);
             }
             ENDCG
