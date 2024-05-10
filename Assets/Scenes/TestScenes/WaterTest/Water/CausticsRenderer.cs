@@ -53,7 +53,7 @@ namespace HephaestusGame
             _camera.backgroundColor = Color.black;
             _camera.cullingMask = 0;
 
-            _renderTexture = RenderTexture.GetTemporary(512, 512, 16, RenderTextureFormat.ARGBFloat);
+            _renderTexture = RenderTexture.GetTemporary(2048, 2048, 16, RenderTextureFormat.ARGBFloat);
             _renderTexture.name = "CausticMap";
             _camera.targetTexture = _renderTexture;
 

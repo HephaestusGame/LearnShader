@@ -24,7 +24,9 @@ float3 GetCaustics(float2 screenUV, float curPixelEyeDepth, float3 viewDirWS, fl
     {
         return 0;
     }
-    float3 caustics = saturate(tex2D(_CausticsMap, uv).rgb - 0.5);
+    // float3 caustics = saturate(tex2D(_CausticsMap, uv).rgb - 0.5);
+    float3 caustics = tex2D(_CausticsMap, uv).rgb;
+    caustics = lerp(caustics, 0, step(caustics, 0));
     float fade = 1.0 - saturate((curPixelDepthBufferWorldPos.y - _CausticsDepthRange.x) / _CausticsDepthRange.y);
     return caustics * _CausticsIntensity * fade;
 }

@@ -54,7 +54,7 @@ Shader "Unlit/Caustics"
 				float oldArea = length(ddx(i.oldPos)) * length(ddy(i.oldPos));
 				float newArea = length(ddx(i.newPos)) * length(ddy(i.newPos));
 
-				float area = (oldArea / newArea) * 0.5;
+				float area = (oldArea / newArea) * 0.5 - 0.5;
 
 				return float4(area, area, area, 1);
 			}
