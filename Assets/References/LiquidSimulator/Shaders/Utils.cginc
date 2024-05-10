@@ -86,6 +86,7 @@ float ClipArea(float3 worldPos) {
 float3 SampleCaustic(float3 worldPos, float clipArea) {
 	float3 lightDir = GetLightDirection(worldPos);
 	float3 hitPos = worldPos + lightDir * (_CausticPlane.w - dot(worldPos, _CausticPlane.xyz) / dot(lightDir, _CausticPlane.xyz));
+	// float3 hitPos = worldPos + lightDir * (_CausticPlane.w - dot(worldPos, _CausticPlane.xyz) / dot(lightDir, _CausticPlane.xyz));
 	float2 uv = (hitPos.xz - _CausticRange.xy) / _CausticRange.zw*0.5 + 0.5;
 	float fade = 1.0 - saturate((worldPos.y - _CausticDepthRange.x) / _CausticDepthRange.y);
 	float3 caustic = tex2D(_CausticMap, uv).rgb - 0.5;

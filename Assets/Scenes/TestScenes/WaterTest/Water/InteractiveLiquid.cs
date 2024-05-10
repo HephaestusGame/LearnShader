@@ -32,6 +32,12 @@ namespace HephaestusGame
         [Min(1)]
         public int heightMapSize = 128;
 
+        
+        [FoldoutGroup("Caustics")]
+        public Material causticsMaterial;
+        [FoldoutGroup("Caustics")]
+        public float causticsIntensity = 1.0f;
+        
         //k1,k2,k3,d
         private Vector4 _liquidParams;
         private InteractiveSampleCamera _interactiveSampleCamera;
@@ -82,6 +88,11 @@ namespace HephaestusGame
                 UpdateWaterParamsIfNeed();
                 _interactiveSampleCamera.UpdateForceFactor(forceFactor);
             }
+
+            if (_causticsRenderer != null)
+            {
+                _causticsRenderer.causticsIntensity = causticsIntensity;
+            }
         }
 
         
@@ -103,17 +114,35 @@ namespace HephaestusGame
         {
             if (waterPlane == null)
                 return;
-            
+
+            CreateWaveCamera();
+            CreateCausticsCamera();
+            Shader.SetGlobalFloat("_InteractiveWaterMaxHeight", waterDepth);
+        }
+
+        private void CreateWaveCamera()
+        {
             GameObject cameraGO = new GameObject("InteractiveSampleCamera");
             cameraGO.transform.SetParent(transform);
             cameraGO.transform.position = waterPlane.bounds.center;
             cameraGO.transform.rotation = Quaternion.Euler(90, waterPlane.transform.rotation.eulerAngles.y, 0);
+            
 
             _interactiveSampleCamera = cameraGO.AddComponent<InteractiveSampleCamera>();
             Bounds bounds = waterPlane.bounds;
-            _interactiveSampleCamera.Init(bounds.size.x, bounds.size.z, waterDepth, forceFactor, _liquidParams, heightMapSize, forceShader, waveEquationShader, generateNormalShader);
-            
-            Shader.SetGlobalFloat("_InteractiveWaterMaxHeight", waterDepth);
+            _interactiveSampleCamera.Init(bounds.size.x, bounds.size.z, waterDepth, forceFactor, _liquidParams, heightMapSize, 
+                forceShader, waveEquationShader, generateNormalShader);
+        }
+        
+        private CausticsRenderer _causticsRenderer;
+        private void CreateCausticsCamera()
+        {
+            GameObject causticsRenderer = new GameObject("CausticsRenderer");
+            causticsRenderer.transform.SetParent(transform);
+            causticsRenderer.transform.position = waterPlane.bounds.center;
+            causticsRenderer.transform.rotation = Quaternion.Euler(90, waterPlane.transform.rotation.eulerAngles.y, 0);
+            _causticsRenderer = causticsRenderer.AddComponent<CausticsRenderer>();
+            _causticsRenderer.Init(causticsIntensity, waterDepth, waterPlane, causticsMaterial);
         }
     }
 }

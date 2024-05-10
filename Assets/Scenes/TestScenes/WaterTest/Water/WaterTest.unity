@@ -257,7 +257,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 3
+  m_Intensity: 1.8
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -315,13 +315,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 275791585}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.32540816, y: 0.2826607, z: -0.8964851, w: 0.10260079}
+  m_LocalRotation: {x: 0.24684015, y: 0.29045948, z: -0.9212198, w: 0.0778284}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 145, y: 140.1, z: 0}
+  m_LocalEulerAnglesHint: {x: 145, y: 150, z: 0}
 --- !u!1 &991489184
 GameObject:
   m_ObjectHideFlags: 0
@@ -607,7 +607,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1305999197}
-  m_Mesh: {fileID: 4300000, guid: 5c6a6acea3a614626a0991e434a0fc1e, type: 2}
+  m_Mesh: {fileID: 4300000, guid: a382920b532444a9fb98d99d07b42e2d, type: 2}
 --- !u!4 &1305999201
 Transform:
   m_ObjectHideFlags: 0
@@ -639,11 +639,13 @@ MonoBehaviour:
   waveEquationShader: {fileID: 4800000, guid: ce66698994eaa422987c33cb8e5dcef0, type: 3}
   generateNormalShader: {fileID: 4800000, guid: aca813d8dcbf145c2b4ddccc60007456, type: 3}
   waterPlane: {fileID: 1305999199}
-  viscosity: 0.5
-  speed: 0.8
+  viscosity: 0.15
+  speed: 0.96
   forceFactor: 1.5
   waterDepth: 100
   heightMapSize: 512
+  causticsMaterial: {fileID: 2100000, guid: 8a866385002e14946882d0c40e65e001, type: 2}
+  causticsIntensity: 0.1
 --- !u!114 &1305999203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1817,6 +1819,7 @@ MonoBehaviour:
   - {x: 0.9753424, y: 0.22069708, z: 0.0034462682, w: 141.75325}
   - {x: 0.88498783, y: 0.46561414, z: 0.0034462682, w: 141.75325}
   - {x: 0.9496993, y: 0.3131634, z: 0.0034462682, w: 141.75325}
+  causticsMaterial: {fileID: 2100000, guid: 8a866385002e14946882d0c40e65e001, type: 2}
   displacementRT: {fileID: 0}
   normalRT: {fileID: 0}
 --- !u!64 &1305999204

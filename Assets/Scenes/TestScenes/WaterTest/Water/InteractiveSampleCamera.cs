@@ -27,7 +27,7 @@ namespace HephaestusGame
         private int _interactiveWaterHeightMapID = Shader.PropertyToID("_InteractiveWaterHeightMap");
         private int _interactiveWaterNormalMapID = Shader.PropertyToID("_InteractiveWaterNormalMap");
         private int _preTexID = Shader.PropertyToID("_PreTex");
-        
+
         public void DrawMesh(Mesh mesh, Matrix4x4 matrix)
         {
             if (!mesh)
@@ -73,17 +73,19 @@ namespace HephaestusGame
             curTexture = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, readWrite);
             curTexture.name = "CurTexture";
             curTexture.filterMode = FilterMode.Trilinear;
+            
             preTexture = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, readWrite);
             preTexture.name = "PreTexture";
             preTexture.filterMode = FilterMode.Trilinear;
+            
             heightMap = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, readWrite);
             heightMap.name = "HeightMap";
             heightMap.filterMode = FilterMode.Trilinear;
+            
             normalMap = RenderTexture.GetTemporary(texSize, texSize, 16, RenderTextureFormat.ARGB32, readWrite);
             normalMap.name = "NormalMap";
             normalMap.filterMode = FilterMode.Trilinear;
             // _normalMap.anisoLevel = 1;
-
             ClearRT();
 
             _camera.targetTexture = curTexture;
@@ -123,6 +125,9 @@ namespace HephaestusGame
             _commandBuffer.Blit(heightMap, normalMap, _generateNormalMaterial);
             _commandBuffer.Blit(curTexture, preTexture);
             _commandBuffer.Blit(heightMap, curTexture);
+            //因为 Blit 会改变 RenderTarget，所以这里最后需要重新设置 RenderTarget（
+            //这里最后的 blit 的 dst 是 curTexture，可以省略，但是如果不是，则需要）
+            _commandBuffer.SetRenderTarget(curTexture);
         }
 
         private void OnDestroy()

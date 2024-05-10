@@ -86,8 +86,8 @@ Material:
     - _FoamDepth: 8
     - _FoamEdgeChangeSpeed: 0.87
     - _FoamFactor: 0
-    - _FoamFactor1: 0.117
-    - _FoamFactor2: 0.155
+    - _FoamFactor1: 0.015
+    - _FoamFactor2: 0.413
     - _FoamSpeed: 8.11
     - _FoamUVOffsetFactor: 0.419
     - _GerstnerTextureSize: 512
@@ -111,7 +111,7 @@ Material:
     m_Colors:
     - _CausticsTilingAndSpeed: {r: 0.005, g: 0.005, b: 0, a: 0}
     - _DeepColor: {r: 0, g: 0.16981131, b: 0, a: 1}
-    - _FoamColor: {r: 0.5849056, g: 0.5849056, b: 0.5849056, a: 1}
+    - _FoamColor: {r: 0.9245283, g: 0.9245283, b: 0.9245283, a: 1}
     - _ShallowColor: {r: 0.014684939, g: 0.6226415, b: 0.37565914, a: 0.54509807}
     - _WaterSpeed: {r: 0.1, g: 0.1, b: 0.05, a: 0.12}
     - _WindSpeed: {r: 0.1, g: 0.1, b: 0, a: 0}

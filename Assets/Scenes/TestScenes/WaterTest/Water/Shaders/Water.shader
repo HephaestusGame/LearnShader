@@ -33,14 +33,6 @@ Shader "Unlit/Water"
         
         
         [Space(30)]
-        [Header(Caustics)]
-        [Space(5)]
-        _CausticsTex("Caustics Texture", 2D) = "black" {}
-        _CausticsTilingAndSpeed("Caustics Tiling", Vector) = (0.01, 0.01, 0.01, 0.01)
-        _CausticsIntensity("Caustics Intensity", Float) = 1
-        _CausticsJitterScale("Caustics Jitter Scale", Float) = 1
-        
-        [Space(30)]
         [Header(Wind)]
         [Space(5)]
         _NoiseTex("Noise Texture", 2D) = "black" {}
@@ -98,7 +90,6 @@ Shader "Unlit/Water"
         }
 
         
-//        Blend SrcAlpha OneMinusSrcAlpha
         Pass
         {
             CGPROGRAM
@@ -119,6 +110,7 @@ Shader "Unlit/Water"
             #include "InteractiveWaterUtils.cginc"
             #include "Foam.cginc"
             #include "DepthUtils.cginc"
+            #include "Caustics.cginc"
 
             struct appdata
             {
@@ -157,11 +149,6 @@ Shader "Unlit/Water"
             sampler2D _BackgroundTexture;
             float4 _BackgroundTexture_TexelSize;
 
-            float4 _CausticsTilingAndSpeed;
-            float _CausticsIntensity, _CausticsJitterScale;
-
-
-           
 
             sampler2D _GerstnerDisplacementTex, _GerstnerNormalTex;
             float _GerstnerTextureSize, _GerstnerTiling;
@@ -175,7 +162,7 @@ Shader "Unlit/Water"
                 return F0 + (1 - F0) * pow(1 - NDotV, 5);
             }
 
-            float3 GetRefractColor(v2f i, float colorFactor, float3 normal)
+            float3 GetRefractColor(v2f i, float colorFactor, float3 normal, float3 lightDir)
             {
                 if (colorFactor < 0.0000001)
                     return 0;
@@ -195,12 +182,13 @@ Shader "Unlit/Water"
                 //background
                 float4 background = tex2D(_BackgroundTexture, uv);
                 //Caustics
-                // float3 caustics = tex2D(_CausticsTex, (curPiexlDepthBufferWorldPos.xz + normal.xy * _CausticsJitterScale) * _CausticsTilingAndSpeed.xy + _Time.y * _CausticsTilingAndSpeed.zw).rgb * _CausticsIntensity * lerpFactor; 
-                // background += caustics;
+                float3 caustics = GetCaustics(i.screenPos.xy / i.screenPos.w, i.screenPos.w, i.viewDirWS, lightDir);
+                float shadow = SHADOW_ATTENUATION(i);
+                caustics *= shadow;
                 
                 float4 waterColor = lerp(_ShallowColor, _DeepColor, lerpFactor);
                 float3 refractedColor = lerp(background, waterColor, lerpFactor);
-                return refractedColor * colorFactor;
+                return (refractedColor + caustics) * colorFactor;
             }
 
             float3 GetReflectColor(v2f i, float3 N, float3 H, float colorFactor)
@@ -284,7 +272,7 @@ Shader "Unlit/Water"
                 #endif
                 
                 float3 V = normalize(-i.viewDirWS);
-                float3 L = _WorldSpaceLightPos0;
+                float3 L = normalize(_WorldSpaceLightPos0);
                 float3 H = normalize(V + L);
                 float NDotV = saturate(dot(N, V));
                 float fresnel = FresnelSchlick(NDotV, 0.04);
@@ -292,7 +280,7 @@ Shader "Unlit/Water"
                     return fresnel;
                 #endif
                 
-                float3 refractColor = GetRefractColor(i, 1 - fresnel, N);
+                float3 refractColor = GetRefractColor(i, 1 - fresnel, N, L);
                 float3 reflectColor = GetReflectColor(i, N, H, fresnel);
                 // return float4(reflectColor, 1);
                 #if defined(ENABLE_FOAM)

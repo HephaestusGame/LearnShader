@@ -20,6 +20,8 @@ public class GPUGerstnerWaves : MonoBehaviour
     public Material waterMaterial;
     public Vector4[] waves;
 
+    public Material causticsMaterial;
+
     public RenderTexture displacementRT;
     public RenderTexture normalRT;
     private int _wavesBufferID = Shader.PropertyToID("gerstnerWavesBuffer");
@@ -70,6 +72,11 @@ public class GPUGerstnerWaves : MonoBehaviour
             waterMaterial.SetTexture(_displacementTextureID, displacementRT);
             waterMaterial.SetTexture(_normalTextureID, normalRT);
             waterMaterial.SetFloat(_GerstnerTextureSizeID, textureSize);
+        }
+
+        if (causticsMaterial != null)
+        {
+            causticsMaterial.SetTexture(_normalTextureID, normalRT);
         }
     }
 

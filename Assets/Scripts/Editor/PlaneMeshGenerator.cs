@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using UnityEngine.Rendering;
 
 namespace HephaestusGame
 {
@@ -12,7 +13,8 @@ namespace HephaestusGame
         float height = 100;
         int widthSegments = 100;
         int heightSegments = 100;
-        string assetPath = "Assets/";
+        string assetPath = "Assets/Res/Mesh/";
+        string meshName = "Plane";
 
         [MenuItem("Tools/Plane Mesh Generator")]
         public static void ShowWindow()
@@ -28,6 +30,7 @@ namespace HephaestusGame
             widthSegments = EditorGUILayout.IntField("Width Segments", widthSegments);
             heightSegments = EditorGUILayout.IntField("Height Segments", heightSegments);
             assetPath = EditorGUILayout.TextField("Asset Path", assetPath);
+            meshName = EditorGUILayout.TextField("Mesh Name", meshName);
 
             if (GUILayout.Button("Generate Mesh"))
             {
@@ -38,7 +41,8 @@ namespace HephaestusGame
         void GeneratePlaneMesh(float width, float height, int widthSegments, int heightSegments, string path)
         {
             Mesh mesh = new Mesh();
-            mesh.name = "CustomPlane";
+            mesh.indexFormat = IndexFormat.UInt32;
+            mesh.name = meshName;
 
             int vertexCount = (widthSegments + 1) * (heightSegments + 1);
             Vector3[] vertices = new Vector3[vertexCount];
