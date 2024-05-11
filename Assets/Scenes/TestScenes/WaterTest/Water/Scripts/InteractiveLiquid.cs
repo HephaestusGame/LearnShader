@@ -38,9 +38,13 @@ namespace HephaestusGame
         [FoldoutGroup("Caustics")]
         public float causticsIntensity = 1.0f;
         
+        [FoldoutGroup("ReflectionCamera")]
+        public int reflectionTextureSize = 512;
+        
         //k1,k2,k3,d
         private Vector4 _liquidParams;
         private InteractiveSampleCamera _interactiveSampleCamera;
+        private ReflectionCamera _reflectionCamera;
         void Start()
         {
             _instance = this;
@@ -49,7 +53,16 @@ namespace HephaestusGame
                 CreateSampleCamera();
             }
 
-            Application.targetFrameRate = 80;
+            CreateReflectionCamera();
+            // Application.targetFrameRate = 120;
+        }
+
+        private void CreateReflectionCamera()
+        {
+            _reflectionCamera = gameObject.AddComponent<ReflectionCamera>();
+            MeshRenderer filter = GetComponent<MeshRenderer>();
+            Material mat = filter.sharedMaterial;
+            _reflectionCamera.Init(mat, waterPlane.transform, reflectionTextureSize);
         }
         
         private bool CalculateLiquidParams()
