@@ -156,6 +156,7 @@ Shader "Unlit/Water"
             sampler2D _InteractiveWaterNormalMap, _InteractiveWaterHeightMap;
             float _InteractiveWaterMaxHeight;
             
+            sampler2D _ReflectionTex;
             
             float FresnelSchlick(float NDotV, float F0)
             {
@@ -195,19 +196,23 @@ Shader "Unlit/Water"
             {
                 if (colorFactor < 0.0000001)
                     return 0;
-
-                float3 curPixelWorldPos = _WorldSpaceCameraPos + i.viewDirWS;
                 
                 //specular
                 float shadow = SHADOW_ATTENUATION(i);
                 float NDotH = saturate(dot(N, H));
                 float3 specular = _LightColor0 * pow(NDotH, _SpecularGloss) * _SpecularIntensity * shadow;
 
-                //SSR
+               
+                #ifndef ENABLE_SSR
+                    float2 uvOffset = N.xz * _RefractionStrength;
+                    float3 reflectColor = tex2D(_ReflectionTex, (i.screenPos.xy + uvOffset)/ i.screenPos.w).rgb;
+                #else
+                    //SSR
+                    float3 curPixelWorldPos = _WorldSpaceCameraPos + i.viewDirWS;
+                    float3 reflectColor = SSR(_BackgroundTexture, _CameraDepthTexture,  i.viewDirWS, N, curPixelWorldPos.y);
+                #endif
                 
-                float3 ssrColor = SSR(_BackgroundTexture, _CameraDepthTexture,  i.viewDirWS, N, curPixelWorldPos.y);
-                float3 reflectColor = specular + ssrColor;
-                return reflectColor * colorFactor;
+                return (reflectColor + specular) * colorFactor;
             }
 
             v2f vert (appdata v)

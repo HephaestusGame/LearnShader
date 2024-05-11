@@ -17,7 +17,6 @@ Shader "Unlit/Caustics"
 			#pragma fragment frag
 			
 			#include "UnityCG.cginc"
-			#include "InteractiveWaterUtils.cginc"
 
 			struct appdata
 			{

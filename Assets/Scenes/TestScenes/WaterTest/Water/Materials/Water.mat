@@ -96,7 +96,7 @@ Material:
     - _MaxDistance: 552.6
     - _MaxStep: 1200
     - _NoiseIntensity: 0.01
-    - _NormalScale: 0.59
+    - _NormalScale: 0.36
     - _RefractionStrength: 8.42
     - _ShowFresnel: 0
     - _ShowNormalWS: 0

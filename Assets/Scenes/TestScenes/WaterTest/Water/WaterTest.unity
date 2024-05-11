@@ -551,7 +551,7 @@ GameObject:
   - component: {fileID: 1305999203}
   - component: {fileID: 1305999202}
   - component: {fileID: 1305999204}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: WaterPlane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -646,6 +646,7 @@ MonoBehaviour:
   heightMapSize: 512
   causticsMaterial: {fileID: 2100000, guid: 8a866385002e14946882d0c40e65e001, type: 2}
   causticsIntensity: 0.1
+  reflectionTextureSize: 512
 --- !u!114 &1305999203
 MonoBehaviour:
   m_ObjectHideFlags: 0
