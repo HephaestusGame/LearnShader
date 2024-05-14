@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: AuroraSky
+  m_Shader: {fileID: 4800000, guid: 8cfe5e8f82a664672968083af158975b, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AurorasNoiseTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 85b21d6242e554bb299fb74836854ab4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AuroraSpeed: 0.219
+    - _AurorasTiling: 0.01
+    - _BaseColorIntensity: 0.354
+    - _Intensity: 0.241
+    - _RayMarchingDistance: 0.1
+    - _RayMarchingMaxStep: 100
+    - _SkyCurvature: 0
+    - _StarCount: 70
+    - _StarIntensity: 0.312
+    - _StarSpeed: 0.152
+    - _SurAuroraColFactor: 0.535
+    m_Colors:
+    - _AuroraColor: {r: 0.5411765, g: 1, b: 0.8088186, a: 1}
+    - _Color1: {r: 0.2830189, g: 0.2830189, b: 0.2830189, a: 1}
+    - _Color2: {r: 0.31990921, g: 0.71418166, b: 0.8584906, a: 1}
+    - _Color3: {r: 0.19108224, g: 0.3171552, b: 0.3584906, a: 1}
+    - _GroundColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SkyColor: {r: 0, g: 0.09411765, b: 0.006930789, a: 1}
+    - _SkylineColor: {r: 0, g: 0.8861275, b: 1, a: 1}
+    - _StarColor: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []

@@ -14,7 +14,6 @@ Material:
   m_ValidKeywords:
   - ENABLE_FOAM
   - ENABLE_GERSTNER_WAVE
-  - ENABLE_SSR
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -82,7 +81,7 @@ Material:
     - _DeepWaterLerpPow: 0.12
     - _EnableFoam: 1
     - _EnableGerstnerWave: 1
-    - _EnableSSR: 1
+    - _EnableSSR: 0
     - _FoamDepth: 8
     - _FoamEdgeChangeSpeed: 0.87
     - _FoamFactor: 0

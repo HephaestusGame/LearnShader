@@ -29,7 +29,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _GerstnerNormalScale: 46.8
+    - _GerstnerNormalScale: 69.3
     - _Refract: 1.22
     m_Colors: []
   m_BuildTextureStacks: []
