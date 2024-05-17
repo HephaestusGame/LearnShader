@@ -158,9 +158,9 @@ Shader "Unlit/Water"
             
             sampler2D _ReflectionTex;
             
-            float FresnelSchlick(float NDotV, float F0)
+            float FresnelSchlick(float VDotH, float F0)
             {
-                return F0 + (1 - F0) * pow(1 - NDotV, 5);
+                return F0 + (1 - F0) * pow(1 - VDotH, 5);
             }
 
             float3 GetRefractColor(v2f i, float colorFactor, float3 normal, float3 lightDir)
@@ -280,7 +280,8 @@ Shader "Unlit/Water"
                 float3 L = normalize(_WorldSpaceLightPos0);
                 float3 H = normalize(V + L);
                 float NDotV = saturate(dot(N, V));
-                float fresnel = FresnelSchlick(NDotV, 0.04);
+                float VDotH = saturate(dot(V, H));
+                float fresnel = FresnelSchlick(VDotH, 0.04);
                 #if defined(SHOW_FRESNEL)
                     return fresnel;
                 #endif

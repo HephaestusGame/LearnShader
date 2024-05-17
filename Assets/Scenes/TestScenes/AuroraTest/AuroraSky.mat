@@ -24,22 +24,23 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _AurorasNoiseTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: 537b8aee1e26f4d6597e0bf556299f58, type: 3}
+        m_Scale: {x: 0.1, y: 0.1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: 85b21d6242e554bb299fb74836854ab4, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Scale: {x: 0.05, y: 0.05}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AuroraSpeed: 0.219
-    - _AurorasTiling: 0.01
+    - _AuroraAttenuation: 0.679
+    - _AuroraSpeed: 0.308
+    - _AurorasTiling: 37.8
     - _BaseColorIntensity: 0.354
     - _Intensity: 0.241
-    - _RayMarchingDistance: 0.1
+    - _RayMarchingDistance: 2.6
     - _RayMarchingMaxStep: 100
-    - _SkyCurvature: 0
+    - _SkyCurvature: 0.01
     - _StarCount: 70
     - _StarIntensity: 0.312
     - _StarSpeed: 0.152
