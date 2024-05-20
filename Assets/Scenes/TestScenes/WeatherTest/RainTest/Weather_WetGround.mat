@@ -63,18 +63,18 @@ Material:
     - _CrackAndHoleAnimTime: 7
     - _CrackAndHoleFloodLevel: 1
     - _EnableReliefMapping: 1
-    - _FlowSpeed: 0.05
+    - _FlowSpeed: 0.0291
     - _HeightScale: 0.005
     - _LightIntensity: 1
     - _PuddleAnimTime: 5
-    - _PuddleFloodLevel: 0.517
-    - _PuddleMargin: 0.598
-    - _RainIntensity: 1
+    - _PuddleFloodLevel: 1
+    - _PuddleMargin: 0.229
+    - _RainIntensity: 0.482
     - _RippleTiling: 0.05
     - _ShowVertexColor: 0
     - _SkyboxIntensity: 1
     - _UseTimeline: 0
-    - _WaveNormalFactor: 1
+    - _WaveNormalFactor: 0.8
     - _WaveNormalNosieFactor: 1.38
     - _WetLevel: 1
     m_Colors: []

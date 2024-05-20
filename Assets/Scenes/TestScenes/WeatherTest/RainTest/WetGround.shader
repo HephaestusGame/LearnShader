@@ -1,7 +1,3 @@
-// Upgrade NOTE: replaced 'defined SHOW_VERTEX_COLOR' with 'defined (SHOW_VERTEX_COLOR)'
-
-// Upgrade NOTE: replaced 'defined ENABLE_RELIEF_MAPPING' with 'defined (ENABLE_RELIEF_MAPPING)'
-
 Shader "Weather/WetGround"
 {
     Properties
@@ -291,7 +287,6 @@ Shader "Weather/WetGround"
                 float3 waveNormal = GetWaveNormal(i.uv.zw);
                 waveNormal = mul(waveNormal, WorldToTangent);
                 float3 waterNormal = waveNormal;
-                // float3 waterNormal = float3(0, 1, 0);
                 
                 // Ripple part
                 float3 RippleNormal  = GetRippleNormal(i.worldPos.xz * _RippleTiling, rainIntensity);
