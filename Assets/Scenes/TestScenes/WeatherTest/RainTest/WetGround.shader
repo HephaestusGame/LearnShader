@@ -6,11 +6,14 @@ Shader "Weather/WetGround"
 {
     Properties
     {
+        [Header(Debug)]
         [Toggle(USE_TIMELINE)] _UseTimeline("Use Timeline", Float) = 0
         _AnimationLength("Animation Length", Float) = 10
         _PuddleAnimTime("Puddle Animation Time", Range(1, 10)) = 1
         _CrackAndHoleAnimTime("Crack And Hole Animation Time", Range(1, 10)) = 1
         _TimelineTexture("Timeline Texture", 2D) = "black" {}
+        [Toggle(ENABLE_RELIEF_MAPPING)] _EnableReliefMapping ("Enable Relief Mapping", Float) = 0
+        [Toggle(SHOW_VERTEX_COLOR)] _ShowVertexColor ("Show Vertex Color", Float) = 0
         
         [Space(30)]
         _MainTex ("Texture", 2D) = "white" {}
@@ -29,8 +32,12 @@ Shader "Weather/WetGround"
         _BaseGlossiness("Base Glossiness", Range(0, 1)) = 0.5
         _RainIntensity("Rain Intensity", Range(0, 1)) = 0
         
-        [Toggle(ENABLE_RELIEF_MAPPING)] _EnableReliefMapping ("Enable Relief Mapping", Float) = 0
-        [Toggle(SHOW_VERTEX_COLOR)] _ShowVertexColor ("Show Vertex Color", Float) = 0
+        [Space(30)]
+        [Header(Wave)]
+        _WaveNormalMap ("Wave Normal Map", 2D) = "black" {}
+        _WaveNormalFactor("Wave Normal Factor", Range(0.01, 20)) = 1
+        _FlowSpeed("Flow Speed", Range(0.001, 0.1)) = 0.03
+        
     }
     SubShader
     {
@@ -59,7 +66,7 @@ Shader "Weather/WetGround"
             struct v2f
             {
                 float4 vertex : SV_POSITION;
-                float2 uv : TEXCOORD0;
+                float4 uv : TEXCOORD0;
                 float3 normalWS : TEXCOORD1;
                 float4 tangentWS : TEXCOORD2;
                 float3 worldPos : TEXCOORD3;
@@ -70,6 +77,11 @@ Shader "Weather/WetGround"
             float4 _MainTex_ST;
             float _HeightScale, _LightIntensity, _SkyboxIntensity, _CrackAndHoleFloodLevel, _PuddleFloodLevel, _WetLevel, _BaseGlossiness;
             float _PuddleMargin, _RainIntensity, _RippleTiling;
+
+            //Wave
+            sampler2D _WaveNormalMap;
+            float4 _WaveNormalMap_ST;
+            float _WaveNormalFactor, _FlowSpeed;
 
             sampler2D _TimelineTexture;
             float _AnimationLength, _PuddleAnimTime, _CrackAndHoleAnimTime;
@@ -154,11 +166,6 @@ Shader "Weather/WetGround"
 
             float3 GetRippleNormal(float2 UV, float rainIntensity)
             {
-                // #if USE_TIMELINE
-                //    float  AnimTime = fmod(_Time.y, _AnimationLength); // Time is in seconds
-                //    float4 AnimateValues = tex2Dlod(_TimelineTexture, float4(AnimTime / _AnimationLength, 0.5, 0.0, 0.0));
-                //    float  RainIntensity = AnimateValues.x;
-                // #endif
                 float4 TimeMul = float4(1.0f, 0.85f, 0.93f, 1.13f);
                 float4 TimeAdd  = float4(0.0f, 0.2f, 0.45f, 0.7f);
                 float GlobalMul = 1.6f;
@@ -189,11 +196,23 @@ Shader "Weather/WetGround"
                 return TextureNormal;
             }
 
+            float3 GetWaveNormal(float2 waveUV)
+            {
+                float2 offsetUV = float2(0, _Time.y * _FlowSpeed);
+                float3 waveNormal1 = UnpackNormal(tex2D(_WaveNormalMap, waveUV + float2(0.5, 0.1) + offsetUV));
+                float3 waveNormal2 = UnpackNormal(tex2D(_WaveNormalMap, waveUV - offsetUV));
+                float3 waveNormal3 = UnpackNormal(tex2D(_WaveNormalMap, waveUV.yx + float2(0.5, 0.1) + offsetUV));
+                float3 waveNormal4 = UnpackNormal(tex2D(_WaveNormalMap, waveUV.yx - offsetUV));
+                float3 waveNormal = normalize(waveNormal1 + waveNormal2 + waveNormal3 + waveNormal4);
+                return waveNormal * _WaveNormalFactor;
+            }
+
             v2f vert (appdata v)
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                o.uv.xy = TRANSFORM_TEX(v.uv, _MainTex);
+                o.uv.zw = TRANSFORM_TEX(v.uv, _WaveNormalMap);
                 o.normalWS = UnityObjectToWorldNormal(v.normal);
                 o.tangentWS = float4(UnityObjectToWorldNormal(v.tangent), v.tangent.w);
                 o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
@@ -214,12 +233,6 @@ Shader "Weather/WetGround"
                 float rainIntensity = _RainIntensity;
                 
                 #if USE_TIMELINE
-                    // float  AnimTime = fmod(_Time.y, _AnimationLength); // Time is in seconds
-                    // float4 AnimateValues = tex2Dlod(_TimelineTexture, float4(AnimTime / _AnimationLength, 0.5, 0.0, 0.0));
-                    // crackAndHoleFloodLevel = AnimateValues.z;
-                    // puddleFloodLevel = AnimateValues.w;
-                    // wetLevel = AnimateValues.y;
-                    // rainIntensity = AnimateValues.x;
                     float totalTime = 2 * (_PuddleAnimTime + _CrackAndHoleAnimTime);
                     float  animTime = fmod(_Time.y, totalTime);
                     if (animTime < _CrackAndHoleAnimTime)
@@ -274,14 +287,20 @@ Shader "Weather/WetGround"
                 accumulatedWaters.y = saturate((puddleFloodLevel - (1 - i.vertexColor.g * 2)) / _PuddleMargin);
                 float accumulatedWater = max(accumulatedWaters.x, accumulatedWaters.y);
 
-                float3 waterNormal = float3(0, 1, 0);
+                 //wave Normal
+                float3 waveNormal = GetWaveNormal(i.uv.zw);
+                waveNormal = mul(waveNormal, WorldToTangent);
+                float3 waterNormal = waveNormal;
+                // float3 waterNormal = float3(0, 1, 0);
+                
                 // Ripple part
                 float3 RippleNormal  = GetRippleNormal(i.worldPos.xz * _RippleTiling, rainIntensity);
-               
                 // return float4(RippleNormal, 1);
                 RippleNormal = mul(RippleNormal, WorldToTangent); 
                 // saturate(RainIntensity * 100.0) to be 1 when RainIntensity is > 0 and 0 else
-                waterNormal  = lerp(waterNormal, RippleNormal, saturate(rainIntensity)); 
+                // waterNormal  = lerp(waterNormal, RippleNormal, saturate(rainIntensity));
+                waterNormal  = normalize(waterNormal + RippleNormal);
+               
 
                 float newWetLevel = saturate(wetLevel + accumulatedWater);
                 DoWetProcess(baseDiffuse, Gloss, newWetLevel);

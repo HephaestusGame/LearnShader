@@ -48,23 +48,34 @@ Material:
         m_Texture: {fileID: 2800000, guid: 9d87f4d5088924a618e2d9dbbeeb759a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _WaveNormalMap:
+        m_Texture: {fileID: 2800000, guid: a196c6d8ed77e483ebb42e38ab5992e7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _WaveNormalNoise:
+        m_Texture: {fileID: 2800000, guid: 0804d9b59e0e5b74e9391a9d3ca551fe, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _AnimationLength: 3
     - _BaseGlossiness: 1
     - _CrackAndHoleAnimTime: 7
-    - _CrackAndHoleFloodLevel: 0
+    - _CrackAndHoleFloodLevel: 1
     - _EnableReliefMapping: 1
+    - _FlowSpeed: 0.05
     - _HeightScale: 0.005
     - _LightIntensity: 1
     - _PuddleAnimTime: 5
-    - _PuddleFloodLevel: 1
+    - _PuddleFloodLevel: 0.517
     - _PuddleMargin: 0.598
     - _RainIntensity: 1
     - _RippleTiling: 0.05
     - _ShowVertexColor: 0
     - _SkyboxIntensity: 1
     - _UseTimeline: 0
+    - _WaveNormalFactor: 1
+    - _WaveNormalNosieFactor: 1.38
     - _WetLevel: 1
     m_Colors: []
   m_BuildTextureStacks: []
