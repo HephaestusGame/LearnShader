@@ -29,12 +29,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _DynamicRainDropSpeed: 0.15
+    - _DynamicRainDropSpeed: 0.8
     - _DynamicRainGridX: 5
     - _DynamicRainGridY: 1
-    - _DynamiceLayer1Tiling: 0.8
-    - _DynamiceLayer2Tiling: 1.73
-    - _MaxBlur: 6
+    - _DynamiceLayer1Tiling: 1.4
+    - _DynamiceLayer2Tiling: 0.93
+    - _MaxBlur: 4.54
     - _MinBlur: 0
     - _RainAmount: 1
     - _StaticRainDropSpeed: 0.1
