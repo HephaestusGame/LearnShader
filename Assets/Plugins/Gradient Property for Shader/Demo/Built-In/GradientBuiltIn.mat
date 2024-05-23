@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!28 &-155686758361447110
+Texture2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: _Grad2_GradientTexture_Texture_{"mode":0,"colorKeys":[{"color":{"r":0.0,"g":0.0,"b":0.0,"a":1.0},"time":0.0},{"color":{"r":0.75,"g":0.15000000596046449,"b":0.0,"a":1.0},"time":0.3000076413154602},{"color":{"r":1.25,"g":0.5600000023841858,"b":0.11999999731779099,"a":1.0},"time":0.5000076293945313},{"color":{"r":3.5,"g":2.0,"b":0.5,"a":1.0},"time":0.7000076174736023},{"color":{"r":4.0,"g":3.5,"b":1.2000000476837159,"a":1.0},"time":0.9000076055526733},{"color":{"r":12.0,"g":10.0,"b":2.5,"a":1.0},"time":1.0}],"alphaKeys":[{"alpha":0.0,"time":0.0},{"alpha":1.0,"time":1.0}]}
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 2
+  m_Width: 256
+  m_Height: 1
+  m_CompleteImageSize: 1024
+  m_MipsStripped: 0
+  m_TextureFormat: 5
+  m_MipCount: 1
+  m_IsReadable: 1
+  m_IsPreProcessed: 0
+  m_IgnoreMasterTextureLimit: 0
+  m_StreamingMipmaps: 0
+  m_StreamingMipmapsPriority: 0
+  m_VTOnly: 0
+  m_AlphaIsTransparency: 0
+  m_ImageCount: 1
+  m_TextureDimension: 2
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_LightmapFormat: 0
+  m_ColorSpace: 1
+  m_PlatformBlob: 
+  image data: 1024
+  _typelessdata: 00000000010200000205010003070100040a0200050c0200060f03000711030008140400091604000a1905000b1b05000c1e06000d2006000e2307000f25070010280800112a0800122d0900132f090014320a0015340a0016370b0017390b00183c0c00193e0c001a410d001b430d001c460e001d480e001e4b0f001f4d0f0020501000215210002255110023571100245a1200255c1200265f13002761130028641400296614002a6915002b6b15002c6e16002d7016002e7317002f75170030781800317a1800327d1900337f190034821a0035841a0036871b0037891b00388c1c00398e1c003a911d003b931d003c961e003d981e003e9b1f003f9d1f0040a0200041a2200042a5210043a7210044aa220045ac220046af230047b1230048b4240049b624004ab925004bbb25004cbe26004dc027004ec329014fc52b0150c82d0251ca2f0352cd320353cf340454d2360455d4380556d73a0657d93c0658dc3e0759de40075ae142085be344095ce646095de8480a5eeb4a0a5fed4c0b60f04e0c61f2500c62f5520d63f7540d64fa560e65fc580f66ff5b0f67ff5d1068ff5f1069ff61116aff63126bff65126cff67136dff69136eff6b146fff6d1570ff6f1571ff711672ff731673ff751774ff771875ff791876ff7b1977ff7d1978ff7f1a79ff811b7aff841b7bff861c7cff881c7dff8a1d7eff8c1e7fff8e1e80ff922081ff9a2182ffa12383ffa82584ffaf2785ffb62986ffbe2b87ffc52d88ffcc2f89ffd3318affda338bffe2348cffe9368dfff0388efff73a8ffffe3c90ffff3e91ffff4092ffff4293ffff4494ffff4695ffff4796ffff4997ffff4b98ffff4d99ffff4f9affff519bffff539cffff559dffff579effff599fffff5aa0ffff5ca1ffff5ea2ffff60a3ffff62a4ffff64a5ffff66a6ffff68a7ffff6aa8ffff6ca9ffff6daaffff6fabffff71acffff73adffff75aeffff77afffff79b0ffff7bb1ffff7db2ffff7fb3ffff81b4ffff85b5ffff88b6ffff8cb7ffff8fb8ffff93b9ffff96baffff9abbffff9dbcffffa1bdffffa4beffffa8bfffffabc0ffffafc1ffffb2c2ffffb6c3ffffb9c4ffffbdc5ffffc0c6ffffc4c7ffffc7c8ffffcbc9ffffcecaffffd2cbffffd5ccffffd9cdffffdcceffffe0cfffffe3d0ffffe7d1ffffead2ffffeed3fffff1d4fffff5d5fffff8d6fffffcd7ffffffd8ffffffd9ffffffdaffffffdbffffffdcffffffddffffffdeffffffdfffffffe0ffffffe1ffffffe2ffffffe3ffffffe4ffffffe5ffffffe6ffffffe7ffffffe8ffffffe9ffffffeaffffffebffffffecffffffedffffffeeffffffeffffffff0fffffff1fffffff2fffffff3fffffff4fffffff5fffffff6fffffff7fffffff8fffffff9fffffffafffffffbfffffffcfffffffdfffffffeffffffffffffff
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: GradientBuiltIn
+  m_Shader: {fileID: 4800000, guid: 1381b7a70e02b744d9fc906fd93460eb, type: 3}
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _Grad2_GradientTexture:
+        m_Texture: {fileID: -155686758361447110}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _Glossiness: 0.5
+    - _Metallic: 0
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []

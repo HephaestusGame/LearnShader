@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Unlit_LightningBolt
+  m_Shader: {fileID: 4800000, guid: 387f29865b123422593795f2c070993d, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _GradientTexture:
+        m_Texture: {fileID: 7707171654761940795}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _ClipValue: 1
+    - _ShowPercent: 0.9793599
+    m_Colors: []
+  m_BuildTextureStacks: []
+--- !u!28 &7707171654761940795
+Texture2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: _GradientTexture_Texture_{"mode":0,"colorKeys":[{"color":{"r":1.0,"g":1.0,"b":1.0,"a":1.0},"time":0.0},{"color":{"r":1.0,"g":1.0,"b":1.0,"a":1.0},"time":0.48235294222831728},{"color":{"r":0.0,"g":0.5078260898590088,"b":1.0,"a":1.0},"time":1.0}],"alphaKeys":[{"alpha":1.0,"time":0.0},{"alpha":1.0,"time":0.8705882430076599},{"alpha":0.0,"time":1.0}]}
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 2
+  m_Width: 256
+  m_Height: 1
+  m_CompleteImageSize: 1024
+  m_MipsStripped: 0
+  m_TextureFormat: 5
+  m_MipCount: 1
+  m_IsReadable: 1
+  m_IsPreProcessed: 0
+  m_IgnoreMipmapLimit: 0
+  m_MipmapLimitGroupName: 
+  m_StreamingMipmaps: 0
+  m_StreamingMipmapsPriority: 0
+  m_VTOnly: 0
+  m_AlphaIsTransparency: 0
+  m_ImageCount: 1
+  m_TextureDimension: 2
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_LightmapFormat: 0
+  m_ColorSpace: 1
+  m_PlatformBlob: 
+  image data: 1024
+  _typelessdata: fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffdfefffffbfdfffff9fcfffff7fbfffff5fafffff3f9fffff1f8fffff0f7ffffeef6ffffecf5ffffeaf5ffffe8f4ffffe6f3ffffe4f2ffffe2f1ffffe0f0ffffdeefffffdceeffffdaedffffd8ecffffd6ebffffd5eaffffd3e9ffffd1e8ffffcfe7ffffcde6ffffcbe5ffffc9e4ffffc7e3ffffc5e2ffffc3e2ffffc1e1ffffbfe0ffffbddfffffbbdeffffb9ddffffb8dcffffb6dbffffb4daffffb2d9ffffb0d8ffffaed7ffffacd6ffffaad5ffffa8d4ffffa6d3ffffa4d2ffffa2d1ffffa0d0ffff9ecfffff9ccfffff9bceffff99cdffff97ccffff95cbffff93caffff91c9ffff8fc8ffff8dc7ffff8bc6ffff89c5ffff87c4ffff85c3ffff83c2ffff81c1ffff80c0ffff7ebfffff7cbeffff7abdffff78bcffff76bbffff74bbffff72baffff70b9ffff6eb8ffff6cb7ffff6ab6ffff68b5ffff66b4ffff64b3ffff63b2ffff61b1ffff5fb0ffff5dafffff5baeffff59adffff57acffff55abffff53aaffff51a9ffff4fa8ffff4da8ffff4ba7ffff49a6ffff47a5ffff46a4ffff44a3ffff42a2ffff40a1fff73ea0fff03c9fffe83a9effe0389dffd8369cffd1349bffc9329affc13099ffb92e98ffb22c97ffaa2b96ffa22995ff9b2795ff932594ff8b2393ff832192ff7c1f91ff741d90ff6c1b8fff64198eff5d178dff55158cff4d138bff46118aff3e0f89ff360e88ff2e0c87ff270a86ff1f0885ff170684ff0f0483ff080282ff000081ff
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 
