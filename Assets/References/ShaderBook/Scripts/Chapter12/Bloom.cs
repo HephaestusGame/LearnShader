@@ -17,7 +17,7 @@ public class Bloom : PostEffectsBase {
 	public int iterations = 3;
 	
 	// Blur spread for each iteration - larger value means more blur
-	[Range(0.2f, 3.0f)]
+	[Range(0.2f, 4f)]
 	public float blurSpread = 0.6f;
 
 	[Range(1, 8)]

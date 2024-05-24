@@ -30,8 +30,12 @@ namespace HephaestusGames
     [ExecuteInEditMode]
     public class LightningBoltsGenerator : MonoBehaviour
     {
+        public bool playAnim = false;
         public MeshFilter meshFilter;
-        public AnimationCurve curve;
+        [FormerlySerializedAs("subBranchWidhtCurve")]
+        [FormerlySerializedAs("curve")]
+        public AnimationCurve subBranchWidthCurve;
+        public AnimationCurve mainBranchWidthCurve;
 
         [Range(1, 12)]
         public int divideLoop = 10;
@@ -45,10 +49,14 @@ namespace HephaestusGames
         public float segmentLerpRandomValue;
         public Transform startPoint;
         public Transform endPoint;
-        public float branchRandomAngle = 5;
-        [Range(0, 1)]
-        public float branchLengthFactor = 0.1f;
-        [Range(0, 1)]
+        
+        [FoldoutGroup("Branch")]
+        public float minBranchRandomAngle = 5;
+        [FoldoutGroup("Branch")]
+        public float maxBranchRandomAngle = 15;
+        [FoldoutGroup("Branch")]
+        public Vector3 branchLengthFactor = Vector3.one * 0.7f;
+        [FoldoutGroup("Branch"),Range(0, .1f)]
         public float generateNewBranchProbability = 0.1f;
 
         private List<LightningBoltSegment> _segmentsList = new List<LightningBoltSegment>();
@@ -159,8 +167,13 @@ namespace HephaestusGames
                     //new branch 
                     if (Random.Range(0.0f, 1.0f) < generateNewBranchProbability )
                     {
-                        Vector3 dir = (branchEndPos - offsetPoint) * branchLengthFactor;
-                        Vector3 branchPoint = offsetPoint + Quaternion.AngleAxis(Random.Range(-branchRandomAngle / (curBranchLevel + 1), branchRandomAngle / (curBranchLevel + 1)), rotateAxis) * dir;
+                        Vector3 dir = (branchEndPos - offsetPoint) * branchLengthFactor[curBranchLevel];
+                        float rotateAngle = Mathf.Sign(
+                                                Random.Range(-1, 1)) *
+                                                Random.Range(
+                                                    minBranchRandomAngle,
+                                                    maxBranchRandomAngle);
+                        Vector3 branchPoint = offsetPoint + Quaternion.AngleAxis(rotateAngle, rotateAxis) * dir;
 
                         Vector4 subBranchPosOnUpperBranch = positionOnUpperBranch;
                         float pos = (segmentIdx + 1) / totalSegments;
@@ -262,8 +275,9 @@ namespace HephaestusGames
                 Vector2 toBranchStartDistance = segment.toBranchStartDistance;
 
                 float curBranchWidth = mainBranchWidth * 0.0001f / (segment.branchLevel + 1);
-                float startWidth = curve.Evaluate(toBranchStartDistance.x) * curBranchWidth;
-                float endWidth = curve.Evaluate(toBranchStartDistance.y) * curBranchWidth;
+                AnimationCurve widthCurve = segment.branchLevel == 0 ? mainBranchWidthCurve : subBranchWidthCurve;
+                float startWidth = widthCurve.Evaluate(toBranchStartDistance.x) * curBranchWidth;
+                float endWidth = widthCurve.Evaluate(toBranchStartDistance.y) * curBranchWidth;
 
                 Vector3 segmentDir = (end - start).normalized;
                 Vector3 point1Dir = Quaternion.AngleAxis(90, _rotateAxis) * segmentDir;
@@ -355,6 +369,11 @@ namespace HephaestusGames
             if (mat == null)
                 return;
 
+            if (!playAnim)
+            {
+                mat.SetFloat(_showPercentID, 1);
+                return;
+            }
             if (_coroutine != null)
             {
                 StopCoroutine(_coroutine);
@@ -365,11 +384,13 @@ namespace HephaestusGames
         IEnumerator DoAnim()
         {
             float startTime = Time.realtimeSinceStartup;
-            while (Time.realtimeSinceStartup - startTime < animTime)
+            while (Time.realtimeSinceStartup - startTime <= animTime)
             {
                 mat.SetFloat(_showPercentID, (Time.realtimeSinceStartup - startTime) / animTime);
                 yield return null;
             }
+
+            mat.SetFloat(_showPercentID, 1);
         }
         private void OnDrawGizmos()
         {

@@ -3,6 +3,7 @@ Shader "Unlit/LightningBolt"
     Properties
     {
         _GradientTexture ("GradientTexture", 2D) = "white" {}
+        _BrighterGradientTexture("Brighter Gradient Texture", 2D) = "white" {}
         _ShowPercent ("Show Percent", Range(0, 1)) = 0
     }
     SubShader
@@ -34,7 +35,8 @@ Shader "Unlit/LightningBolt"
                 float4 vertexColor : TEXCOORD1;
             };
 
-            sampler2D _GradientTexture;
+            sampler2D _GradientTexture, _BrighterGradientTexture;
+            
             float4 _GradientTexture_ST;
             float _ShowPercent;
 
@@ -52,7 +54,15 @@ Shader "Unlit/LightningBolt"
                 if (i.vertexColor.a > _ShowPercent)
                     discard;
                 // sample the texture
-                fixed4 col = tex2D(_GradientTexture, float2(i.uv.x, 0.5));
+                fixed4 col;
+                if (i.uv.y > 0.8f)
+                {
+                    col = tex2D(_BrighterGradientTexture, float2(i.uv.x, 0.5));
+                } else
+                {
+                    col = tex2D(_GradientTexture, float2(i.uv.x, 0.5));
+                }
+               
                 col *= i.uv.y;
                 return col;
             }
