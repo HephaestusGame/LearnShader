@@ -27,11 +27,39 @@ namespace HephaestusGames
         //当前分支在上一级分支中的百分比位置
         public Vector3 positionOnUpperBranch;
     }
+
+    [Serializable]
+    public class BranchGenerationConfig
+    {
+        public AnimationCurve widthCure;
+        public float width = 150;
+        [Range(0, 1)]
+        public float twistFactor = 0.3f;
+        [Range(0, 1)]
+        public float divisionFactor = 0.5f;
+        [Range(0, 1)]
+        public float divisionFactorRandomValue = 0.1f;
+        [Range(0, 1)]
+        public float brightness = 1;
+        
+        [FoldoutGroup("SubBranch"),Range(0, .1f)]
+        public float generateNewBranchProbability = 0.03f;
+        [FoldoutGroup("SubBranch")]
+        public float minBranchRandomAngle = 45;
+        [FoldoutGroup("SubBranch")]
+        public float maxBranchRandomAngle = 65;
+        [FoldoutGroup("SubBranch")]
+        public float subBranchLengthFactor = 0.7f;
+    }
     [ExecuteInEditMode]
     public class LightningBoltsGenerator : MonoBehaviour
     {
+        public List<BranchGenerationConfig> branchGenerationConfigs = new List<BranchGenerationConfig>();
+        
         public bool playAnim = false;
         public MeshFilter meshFilter;
+        public Transform startPoint;
+        public Transform endPoint;
         [FormerlySerializedAs("subBranchWidhtCurve")]
         [FormerlySerializedAs("curve")]
         public AnimationCurve subBranchWidthCurve;
@@ -39,25 +67,27 @@ namespace HephaestusGames
 
         [Range(1, 12)]
         public int divideLoop = 10;
-        [Range(0, 3)]
-        public int subBranchLevel = 3;
-        [Range(0, 1)]
-        public float maximumOffset;
-        [Range(0, 1)]
-        public float segmentLerpValue;
-        [Range(0, 1)]
-        public float segmentLerpRandomValue;
-        public Transform startPoint;
-        public Transform endPoint;
-        
-        [FoldoutGroup("Branch")]
-        public float minBranchRandomAngle = 5;
-        [FoldoutGroup("Branch")]
-        public float maxBranchRandomAngle = 15;
-        [FoldoutGroup("Branch")]
-        public Vector3 branchLengthFactor = Vector3.one * 0.7f;
-        [FoldoutGroup("Branch"),Range(0, .1f)]
-        public float generateNewBranchProbability = 0.1f;
+        // [Range(0, 3)]
+        // public int subBranchLevel = 3;
+        // [FormerlySerializedAs("maximumOffset")]
+        // [Range(0, 1)]
+        // public float twistFactor;
+        // [FormerlySerializedAs("segmentLerpValue")]
+        // [Range(0, 1)]
+        // public float divisionFactor;
+        // [FormerlySerializedAs("segmentLerpRandomValue")]
+        // [Range(0, 1)]
+        // public float divisionFactorRandomValue;
+        //
+        //
+        // [FoldoutGroup("Branch")]
+        // public float minBranchRandomAngle = 5;
+        // [FoldoutGroup("Branch")]
+        // public float maxBranchRandomAngle = 15;
+        // [FoldoutGroup("Branch")]
+        // public Vector3 branchLengthFactor = Vector3.one * 0.7f;
+        // [FoldoutGroup("Branch"),Range(0, .1f)]
+        // public float generateNewBranchProbability = 0.1f;
 
         private List<LightningBoltSegment> _segmentsList = new List<LightningBoltSegment>();
         private List<LightningBoltSegment> _tempList = new List<LightningBoltSegment>();
@@ -113,7 +143,7 @@ namespace HephaestusGames
             float mainBranchLength = Vector3.Distance(startPos, endPos);
             //Main Branch
             ProcessBranch(startPos, endPos, mainBranchLength, _rotateAxis, 0, Vector4.zero);
-            for (int curBranchLevel = 1; curBranchLevel <= subBranchLevel; curBranchLevel++)
+            for (int curBranchLevel = 1; curBranchLevel < branchGenerationConfigs.Count; curBranchLevel++)
             {
                 _tempList2.Clear();
                 _tempList2.AddRange(_branchList);
@@ -135,7 +165,9 @@ namespace HephaestusGames
             float curBranchLength = Vector3.Distance(branchStartPos, branchEndPos);
             int branchDivideLoop = Mathf.CeilToInt(divideLoop - Mathf.Log(1.0f / (curBranchLength / mainBranchLength), 2)) - 1; 
             branchDivideLoop = branchDivideLoop < 1 ? 1 : branchDivideLoop;
-            float curOffset = Mathf.Pow(0.5f, curBranchLevel) * maximumOffset * curBranchLength;
+            
+            BranchGenerationConfig curBranchConfig = branchGenerationConfigs[curBranchLevel];
+            float curOffset = Mathf.Pow(0.5f, curBranchLevel) * curBranchConfig.twistFactor * curBranchLength;
             for (int i = 0; i < branchDivideLoop; i++)
             {
                 int segmentIdx = 0;
@@ -144,7 +176,7 @@ namespace HephaestusGames
                 {
                     Vector3 segmentStart = segment.start;
                     Vector3 segmentEnd = segment.end;
-                    Vector3 offsetPoint = Vector3.Lerp(segmentStart, segmentEnd, segmentLerpValue + Random.Range(-segmentLerpRandomValue, segmentLerpRandomValue));
+                    Vector3 offsetPoint = Vector3.Lerp(segmentStart, segmentEnd, curBranchConfig.divisionFactor + Random.Range(-curBranchConfig.divisionFactorRandomValue, curBranchConfig.divisionFactorRandomValue));
 
                     Vector3 segmentDir = (segmentEnd - segmentStart).normalized;
                     Vector3 perpendicular = Quaternion.AngleAxis(90 * Mathf.Sign(Random.Range(-1, 1)), rotateAxis) * segmentDir;
@@ -165,14 +197,14 @@ namespace HephaestusGames
                     _tempList.Add(new LightningBoltSegment(offsetPoint, segmentEnd, positionOnUpperBranch, toBranchStartDistance, curBranchLevel));
                     
                     //new branch 
-                    if (Random.Range(0.0f, 1.0f) < generateNewBranchProbability )
+                    if (Random.Range(0.0f, 1.0f) < curBranchConfig.generateNewBranchProbability )
                     {
-                        Vector3 dir = (branchEndPos - offsetPoint) * branchLengthFactor[curBranchLevel];
+                        Vector3 dir = (branchEndPos - offsetPoint) * curBranchConfig.subBranchLengthFactor;
                         float rotateAngle = Mathf.Sign(
                                                 Random.Range(-1, 1)) *
                                                 Random.Range(
-                                                    minBranchRandomAngle,
-                                                    maxBranchRandomAngle);
+                                                    curBranchConfig.minBranchRandomAngle,
+                                                    curBranchConfig.maxBranchRandomAngle);
                         Vector3 branchPoint = offsetPoint + Quaternion.AngleAxis(rotateAngle, rotateAxis) * dir;
 
                         Vector4 subBranchPosOnUpperBranch = positionOnUpperBranch;
@@ -213,11 +245,11 @@ namespace HephaestusGames
             _finalList.AddRange(_segmentsList);
         }
 
-        [Range(0, 1)]
+        [FoldoutGroup("Anim"), Range(0, 1)]
         public float subBranchShowTime_1 = 0.2f;
-        [Range(0, 1)]
+        [FoldoutGroup("Anim"), Range(0, 1)]
         public float subBranchShowTime_2 = 0.1f;
-        [Range(0, 1)]
+        [FoldoutGroup("Anim"), Range(0, 1)]
         public float subBranchShowTime_3 = 0.05f;
         private float CalculateVerticeShowTime(Vector3 positionOnUpperBranch, float positionOnCurBranch, int curBranch)
         {
@@ -268,6 +300,7 @@ namespace HephaestusGames
 
 
             Vector3 lightningStartPos = startPoint.position;
+            Vector3 previousPoint1 = lightningStartPos, previousPoint2 = lightningStartPos, previousPoint3 = lightningStartPos;
             foreach (var segment in _finalList)
             {
                 Vector3 start = segment.start;
@@ -284,67 +317,118 @@ namespace HephaestusGames
                 Vector3 point2Dir = Quaternion.AngleAxis(120, segmentDir) * point1Dir;
                 Vector3 point3Dir = Quaternion.AngleAxis(240, segmentDir) * point1Dir;
 
-                Vector3 startPos = start - lightningStartPos - (end - start) * 0.1f;
-                Vector3 endPos = end - lightningStartPos +  (end - start) * 0.1f;
+                // Vector3 startPos = start - lightningStartPos - (end - start) * 0.1f;
+                // Vector3 endPos = end - lightningStartPos +  (end - start) * 0.1f;
+                
+                Vector3 startPos = start - lightningStartPos;//移动到原点
+                Vector3 endPos = end - lightningStartPos;//移动到原点
 
+                bool shouldUsePreviousVertices = toBranchStartDistance.x > Mathf.Epsilon;
                 //u：存储当前顶点在当前分支中的百分比位置 v：存储当前顶点的亮度因子
-                Vector2 startUV = new Vector2(toBranchStartDistance.x, brightness[segment.branchLevel]);
+                if (!shouldUsePreviousVertices)
+                {
+                    Vector2 startUV = new Vector2(toBranchStartDistance.x, brightness[segment.branchLevel]);
+                    _uvs.Add(startUV);
+                    _uvs.Add(startUV);
+                    _uvs.Add(startUV);
+                }
                 Vector2 endUV = new Vector2(toBranchStartDistance.y, brightness[segment.branchLevel]);
-                _uvs.Add(startUV);
-                _uvs.Add(startUV);
-                _uvs.Add(startUV);
                 _uvs.Add(endUV);
                 _uvs.Add(endUV);
                 _uvs.Add(endUV);
                 
                 //顶点色存储雷电出现时间
-                float startVertexShowTime = CalculateVerticeShowTime(segment.positionOnUpperBranch, toBranchStartDistance.x, segment.branchLevel);
+                if (!shouldUsePreviousVertices)
+                {
+                    float startVertexShowTime = CalculateVerticeShowTime(segment.positionOnUpperBranch, toBranchStartDistance.x, segment.branchLevel);
+                    Color startColor = new Color(
+                        segment.positionOnUpperBranch.x, segment.positionOnUpperBranch.y,
+                        segment.positionOnUpperBranch.z, startVertexShowTime);
+                    _colors.Add(startColor);
+                    _colors.Add(startColor);
+                    _colors.Add(startColor);
+                }
                 float endVertexShowTime = CalculateVerticeShowTime(segment.positionOnUpperBranch, toBranchStartDistance.y, segment.branchLevel);
-                Color startColor = new Color(
-                    segment.positionOnUpperBranch.x, segment.positionOnUpperBranch.y,
-                    segment.positionOnUpperBranch.z, startVertexShowTime);
                 Color endColor = new Color(
                     segment.positionOnUpperBranch.x, segment.positionOnUpperBranch.y,
                     segment.positionOnUpperBranch.z, endVertexShowTime);
-                _colors.Add(startColor);
-                _colors.Add(startColor);
-                _colors.Add(startColor);
                 _colors.Add(endColor);
                 _colors.Add(endColor);
                 _colors.Add(endColor);
                 
                 //起点三角形三个点
-                _vertices.Add(startPos + point1Dir * startWidth);
-                _vertices.Add(startPos + point2Dir * startWidth);
-                _vertices.Add(startPos + point3Dir * startWidth);
+                if (!shouldUsePreviousVertices)
+                {
+                    _vertices.Add(startPos + point1Dir * startWidth);
+                    _vertices.Add(startPos + point2Dir * startWidth);
+                    _vertices.Add(startPos + point3Dir * startWidth);
+                }
+                // else
+                // {
+                //     _vertices.Add(previousPoint1);
+                //     _vertices.Add(previousPoint2);
+                //     _vertices.Add(previousPoint3);
+                // }
+
+                
                 
                 //终点三角形三个点
-                _vertices.Add(endPos + point1Dir * endWidth);
-                _vertices.Add(endPos + point2Dir * endWidth);
-                _vertices.Add(endPos + point3Dir * endWidth);
+                previousPoint1 = endPos + point1Dir * endWidth;
+                previousPoint2 = endPos + point2Dir * endWidth;
+                previousPoint3 = endPos + point3Dir * endWidth;
+                _vertices.Add(previousPoint1);
+                _vertices.Add(previousPoint2);
+                _vertices.Add(previousPoint3);
                 
                 //六个点组成六个三角形
-                _triangles.Add(vertexIndex);
-                _triangles.Add(vertexIndex + 5);
-                _triangles.Add(vertexIndex + 2);
-                _triangles.Add(vertexIndex + 0);
-                _triangles.Add(vertexIndex + 3);
-                _triangles.Add(vertexIndex + 5);
+                if (!shouldUsePreviousVertices)
+                {
+                    _triangles.Add(vertexIndex);
+                    _triangles.Add(vertexIndex + 5);
+                    _triangles.Add(vertexIndex + 2);
+                    _triangles.Add(vertexIndex + 0);
+                    _triangles.Add(vertexIndex + 3);
+                    _triangles.Add(vertexIndex + 5);
                 
-                _triangles.Add(vertexIndex + 1);
-                _triangles.Add(vertexIndex + 2);
-                _triangles.Add(vertexIndex + 4);
-                _triangles.Add(vertexIndex + 2);
-                _triangles.Add(vertexIndex + 5);
-                _triangles.Add(vertexIndex + 4);
+                    _triangles.Add(vertexIndex + 1);
+                    _triangles.Add(vertexIndex + 2);
+                    _triangles.Add(vertexIndex + 4);
+                    _triangles.Add(vertexIndex + 2);
+                    _triangles.Add(vertexIndex + 5);
+                    _triangles.Add(vertexIndex + 4);
                 
-                _triangles.Add(vertexIndex + 0);
-                _triangles.Add(vertexIndex + 1);
-                _triangles.Add(vertexIndex + 3);
-                _triangles.Add(vertexIndex + 1);
-                _triangles.Add(vertexIndex + 4);
-                _triangles.Add(vertexIndex + 3);
-                vertexIndex += 6;
+                    _triangles.Add(vertexIndex + 0);
+                    _triangles.Add(vertexIndex + 1);
+                    _triangles.Add(vertexIndex + 3);
+                    _triangles.Add(vertexIndex + 1);
+                    _triangles.Add(vertexIndex + 4);
+                    _triangles.Add(vertexIndex + 3);
+                    vertexIndex += 6;
+                }
+                else
+                {
+                    _triangles.Add(vertexIndex - 3);
+                    _triangles.Add(vertexIndex + 5 - 3);
+                    _triangles.Add(vertexIndex + 2 - 3);
+                    _triangles.Add(vertexIndex + 0 - 3);
+                    _triangles.Add(vertexIndex + 3 - 3);
+                    _triangles.Add(vertexIndex + 5 - 3);
+                
+                    _triangles.Add(vertexIndex + 1 - 3);
+                    _triangles.Add(vertexIndex + 2 - 3);
+                    _triangles.Add(vertexIndex + 4 - 3);
+                    _triangles.Add(vertexIndex + 2 - 3);
+                    _triangles.Add(vertexIndex + 5 - 3);
+                    _triangles.Add(vertexIndex + 4 - 3);
+                
+                    _triangles.Add(vertexIndex + 0 - 3);
+                    _triangles.Add(vertexIndex + 1 - 3);
+                    _triangles.Add(vertexIndex + 3 - 3);
+                    _triangles.Add(vertexIndex + 1 - 3);
+                    _triangles.Add(vertexIndex + 4 - 3);
+                    _triangles.Add(vertexIndex + 3 - 3);
+                    vertexIndex += 3;
+                }
             }
             
             mesh.vertices = _vertices.ToArray();
