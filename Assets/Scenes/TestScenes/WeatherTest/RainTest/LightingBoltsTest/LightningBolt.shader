@@ -3,22 +3,19 @@ Shader "Unlit/LightningBolt"
     Properties
     {
         _GradientTexture ("GradientTexture", 2D) = "white" {}
-        _BrighterGradientTexture("Brighter Gradient Texture", 2D) = "white" {}
-        _ShowPercent ("Show Percent", Range(0, 1)) = 0
+        _AnimProgress ("Anim Progress", Range(0, 1)) = 0
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "RenderType"="Transparent" "Queue" = "Transparent" }
         LOD 100
 
+        Blend One One
         Pass
         {
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            // make fog work
-            #pragma multi_compile_fog
-
             #include "UnityCG.cginc"
 
             struct appdata
@@ -35,10 +32,10 @@ Shader "Unlit/LightningBolt"
                 float4 vertexColor : TEXCOORD1;
             };
 
-            sampler2D _GradientTexture, _BrighterGradientTexture;
+            sampler2D _GradientTexture;
             
             float4 _GradientTexture_ST;
-            float _ShowPercent;
+            float _AnimProgress, _TotalAnimDuration = 1;
 
             v2f vert (appdata v)
             {
@@ -51,19 +48,14 @@ Shader "Unlit/LightningBolt"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                if (i.vertexColor.a > _ShowPercent)
+                if (i.vertexColor.a > _AnimProgress * _TotalAnimDuration)
                     discard;
-                // sample the texture
-                fixed4 col;
-                if (i.uv.y > 0.8f)
-                {
-                    col = tex2D(_BrighterGradientTexture, float2(i.uv.x, 0.5));
-                } else
-                {
-                    col = tex2D(_GradientTexture, float2(i.uv.x, 0.5));
-                }
+
+                fixed4 col = tex2D(_GradientTexture, float2(i.vertexColor.a, 0.5));
                
-                col *= i.uv.y;
+                col *= i.vertexColor.b;
+                col.rgb = min(col.rgb, 60.0);
+                col.rgb /= col.rgb + 1.0f;//Reinhard Tonemapping
                 return col;
             }
             ENDCG
