@@ -465,57 +465,12 @@ namespace HephaestusGames
             mesh.colors = _colors.ToArray();
             
             meshFilter.mesh = mesh;
-            LightningAnim();
         }
 
 
         public Material mat;
-        [FormerlySerializedAs("animTime")]
-        [FormerlySerializedAs("showTime")]
-        public float animDuration = 1.0f;
-        private int _animProgressID = Shader.PropertyToID("_ShowPercent");
-        private int _animTotalDurationID = Shader.PropertyToID("_TotalAnimDuration");
-        private Coroutine _coroutine;
-
-        private float TotalAnimDuration
-        {
-            get
-            {
-                return 1 + subBranchShowTime_1 + subBranchShowTime_2 + subBranchShowTime_3;
-            }
-        }
-        [Button]
-        public void LightningAnim()
-        {
-            if (mat == null)
-                return;
-
-            mat.SetFloat(_animTotalDurationID, TotalAnimDuration);
-            if (!playAnim)
-            {
-                mat.SetFloat(_animProgressID, 1);
-                return;
-            }
-            if (_coroutine != null)
-            {
-                StopCoroutine(_coroutine);
-            }
-            _coroutine = StartCoroutine(DoAnim());
-        }
-
-        IEnumerator DoAnim()
-        {
-            float startTime = Time.realtimeSinceStartup;
-
-            while (Time.realtimeSinceStartup - startTime <= animDuration)
-            {
-                mat.SetFloat(_animTotalDurationID, TotalAnimDuration);
-                mat.SetFloat(_animProgressID, (Time.realtimeSinceStartup - startTime) / animDuration);
-                yield return null;
-            }
-
-            mat.SetFloat(_animProgressID, 1);
-        }
+        
+        
         private void OnDrawGizmos()
         {
             if (_finalList.Count > 0)
