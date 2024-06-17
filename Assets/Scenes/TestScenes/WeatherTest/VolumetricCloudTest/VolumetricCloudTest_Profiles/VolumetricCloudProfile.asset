@@ -1,0 +1,131 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e6292b2c06870d4495f009f912b9600, type: 3}
+  m_Name: VolumetricCloudProfile
+  m_EditorClassIdentifier: 
+  settings:
+  - {fileID: 4820892262765102664}
+--- !u!114 &4820892262765102664
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d140638d576de40fdbe16f58d10f2b28, type: 3}
+  m_Name: ColorTint
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  enableDirectionalScattering:
+    overrideState: 1
+    value: 1
+  blueNoiseTex:
+    overrideState: 1
+    value: {fileID: 2800000, guid: 1e4cb589bf414451f8dc5eae5fe09263, type: 3}
+    defaultState: 1
+  blueNoiseTexTiling:
+    overrideState: 1
+    value: 0.33
+  blueNoiseAffectFactor:
+    overrideState: 1
+    value: 1
+  rayMarchSteps:
+    overrideState: 1
+    value: 100
+  rayMarchStepSize:
+    overrideState: 1
+    value: 400
+  densityScale:
+    overrideState: 1
+    value: 2
+  cloudCoverageRate:
+    overrideState: 1
+    value: 0.5
+  noiseTextureTiling:
+    overrideState: 1
+    value: 0.0001
+  noiseTextureOffset:
+    overrideState: 1
+    value: {x: 0, y: 0, z: 0}
+  noise3D:
+    overrideState: 1
+    value: {fileID: 11700000, guid: 0eae5833f82424746baf1b293b328870, type: 2}
+    defaultState: 1
+  baseDetailFactor:
+    overrideState: 1
+    value: 0.482
+  lightAbsorption:
+    overrideState: 1
+    value: 0.7
+  scatterForward:
+    overrideState: 1
+    value: 0.5
+  scatterForwardIntensity:
+    overrideState: 1
+    value: 0.5
+  scatterBackward:
+    overrideState: 1
+    value: 0.5
+  scatterBackwardIntensity:
+    overrideState: 1
+    value: 0.5
+  scatterBase:
+    overrideState: 1
+    value: 0.805
+  scatterIntensity:
+    overrideState: 1
+    value: 1
+  midToneColorOffset:
+    overrideState: 1
+    value: 0.5
+  darknessThreshold:
+    overrideState: 1
+    value: 0.2
+  brightColor:
+    overrideState: 1
+    value: {r: 0.9, g: 0.9, b: 1, a: 1}
+  midToneColor:
+    overrideState: 1
+    value: {r: 0.37, g: 0.42, b: 0.54, a: 1}
+  darkColor:
+    overrideState: 1
+    value: {r: 0.03, g: 0.03, b: 0.05, a: 1}
+  weatherMap:
+    overrideState: 1
+    value: {fileID: 2800000, guid: 5004813c512e44ec2a04195485121c29, type: 3}
+    defaultState: 1
+  stratusRange:
+    overrideState: 1
+    value: {x: 0, y: 0.5}
+  stratusFeather:
+    overrideState: 1
+    value: 0.3
+  cumulusRange:
+    overrideState: 1
+    value: {x: 0.2, y: 1}
+  cumulusFeather:
+    overrideState: 1
+    value: 0.35
+  useCloudLayerBoudingBox:
+    overrideState: 1
+    value: 1
+  cloudLayerHeightMin:
+    overrideState: 1
+    value: 1500
+  cloudLayerHeightMax:
+    overrideState: 1
+    value: 4000
