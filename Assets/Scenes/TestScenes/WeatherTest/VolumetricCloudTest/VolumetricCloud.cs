@@ -15,6 +15,21 @@ namespace HepheastusGame
     public class VolumetricCloud : PostProcessEffectSettings
     {
         public BoolParameter enableDirectionalScattering = new BoolParameter { value = true };
+        public BoolParameter eanbleDetail = new BoolParameter() { value = false };
+
+        [Range(0.1f, 2.0f)]
+        public FloatParameter rtScale = new FloatParameter() { value = 2.0f };
+        
+        public TextureParameter detailShapeTex = new TextureParameter() { value = null };
+        [Range(0.1f, 3.0f)]
+        public FloatParameter detailShapeTiling = new FloatParameter() { value = 0.1f };
+        [Range(0.0f, 1.0f)]
+        public FloatParameter detailFactor = new FloatParameter() { value = 0.5f };
+        
+        //Wind
+        public Vector3Parameter windDirection = new Vector3Parameter() { value = Vector3.zero };
+        [Range(0.0f, 5.0f)]
+        public FloatParameter windSpeed = new FloatParameter() { value = 0.0f };
 
         //噪声优化
         public TextureParameter blueNoiseTex = new TextureParameter() { value = null };
@@ -93,6 +108,13 @@ namespace HepheastusGame
                 _cloudTransform = go.GetComponent<Transform>();
             }
         }
+        
+        private int _detailShapeTexID = Shader.PropertyToID("_DetailShapeTex");
+        private int _detailShapeTilingID = Shader.PropertyToID("_DetailShapeTiling");
+        private int _detailFactorID = Shader.PropertyToID("_DetailFactor");
+
+        private int _windDirectionID = Shader.PropertyToID("_WindDirection");
+        private int _windSpeedID = Shader.PropertyToID("_WindSpeed");
 
         private int _blueNoiseTexID = Shader.PropertyToID("_BlueNoiseTex");
         private int _blueNoiseTexTilingID = Shader.PropertyToID("_BlueNoiseTexTiling");
@@ -152,6 +174,13 @@ namespace HepheastusGame
                 properties.SetVector(_boundsMinID, boundsMin);
                 properties.SetVector(_boundsMaxID, boundsMax);
             }
+            
+            properties.SetFloat(_detailShapeTilingID, settings.detailShapeTiling.value);
+            properties.SetFloat(_detailFactorID, settings.detailFactor.value);
+            
+            properties.SetVector(_windDirectionID, Vector3.Normalize(settings.windDirection.value));
+            properties.SetFloat(_windSpeedID, settings.windSpeed);
+            
             properties.SetFloat(_cloudLayerHeightMinID, settings.cloudLayerHeightMin);
             properties.SetFloat(_cloudLayerHeightMaxID, settings.cloudLayerHeightMax);
             properties.SetInt(_rayMarchStepsID, settings.rayMarchSteps.value);
@@ -184,10 +213,18 @@ namespace HepheastusGame
             SetKeywords(sheet);
             SetTextures(sheet);
 
+
+            RenderTexture temp = RenderTexture.GetTemporary(
+                Mathf.FloorToInt(Screen.width * settings.rtScale.value) , 
+                Mathf.FloorToInt(Screen.height * settings.rtScale.value), 0, 
+                RenderTextureFormat.ARGB32);
+            context.command.BlitFullscreenTriangle(context.source, temp, sheet, 0);
+            context.command.BlitFullscreenTriangle(temp, context.destination);
             
-            context.command.BlitFullscreenTriangle(context.source, context.destination, sheet, 0);
+            RenderTexture.ReleaseTemporary(temp);
             cmd.EndSample("VolumetricCloud");
         }
+        
 
         private void SetKeywords(PropertySheet sheet)
         {
@@ -198,6 +235,15 @@ namespace HepheastusGame
             else
             {
                 sheet.DisableKeyword("ENABLE_DIRECTIONAL_SCATTERING");
+            }
+
+            if (settings.eanbleDetail)
+            {
+                sheet.EnableKeyword("USE_DETAIL_SHAPE_TEX");
+            }
+            else
+            {
+                sheet.DisableKeyword("USE_DETAIL_SHAPE_TEX");
             }
 
             if (settings.useCloudLayerBoudingBox)
@@ -214,6 +260,9 @@ namespace HepheastusGame
 
         private void SetTextures(PropertySheet sheet)
         {
+            if (settings.detailShapeTex.value != null)
+                sheet.properties.SetTexture(_detailShapeTexID, settings.detailShapeTex.value);
+            
             if (settings.blueNoiseTex.value != null)
             {
                 sheet.properties.SetTexture(_blueNoiseTexID, settings.blueNoiseTex.value);
