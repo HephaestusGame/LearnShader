@@ -179,6 +179,12 @@ float HenyeyGreenstein(float angle, float g)
     return(1.0 - g2) / (4.0 * PI * pow(1.0 + g2 - 2.0 * g * angle, 1.5));
 }
 
+float HenyeyGreensteinNoPi(float sundotrd, float g)
+{
+    float gg = g * g;
+    return (1.0f - gg) / pow(1.0f + gg - 2.0f * g * sundotrd, 1.5f);
+}
+
 //两层Henyey-Greenstein散射，使用Max混合。同时兼顾向前 向后散射
 float HGScatterMax(float angle, float g_1, float intensity_1, float g_2, float intensity_2)
 {

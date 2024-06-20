@@ -7,13 +7,16 @@ Shader "Hidden/PostProcessing/VolumetricCloud"
         Pass
         {
             HLSLPROGRAM
+            #include "Packages/com.unity.postprocessing/PostProcessing/Shaders/StdLib.hlsl"
+            #include "../CloudHelper.hlsl"
+
+             
             #pragma vertex VertDefault
             #pragma fragment Frag
             #pragma multi_compile_local _ ENABLE_DIRECTIONAL_SCATTERING
             #pragma multi_compile_local USE_AABB_BOUNDING_BOX  USE_CLOUD_LAYER_BOUNDING_BOX
             #pragma multi_compile_local _ USE_DETAIL_SHAPE_TEX
-            #include "Packages/com.unity.postprocessing/PostProcessing/Shaders/StdLib.hlsl"
-            #include "../CloudHelper.hlsl"
+           
             TEXTURE2D_SAMPLER2D(_MainTex, sampler_MainTex);
             TEXTURE2D_SAMPLER2D(_CameraDepthTexture, sampler_CameraDepthTexture);
 
@@ -77,7 +80,7 @@ Shader "Hidden/PostProcessing/VolumetricCloud"
                  viewPos.xyz /= viewPos.w;//详细推导见笔记中深度雾重建世界坐标部分
                  float4 worldPos = mul(_InverseViewMatrix, float4(viewPos.xyz, 1));
                  return worldPos;
-             }
+            }
             
             
 

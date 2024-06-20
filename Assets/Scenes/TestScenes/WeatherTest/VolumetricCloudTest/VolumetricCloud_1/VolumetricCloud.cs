@@ -2,16 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
-using SneakySquirrelLabs.MinMaxRangeAttribute;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
-using UnityEngine.Serialization;
 
 
 namespace HepheastusGame
 {
     [Serializable]
-    [PostProcess(typeof(VolumetricCloudRenderer), PostProcessEvent.AfterStack, "Unity/ColorTint")]
+    [PostProcess(typeof(VolumetricCloudRenderer), PostProcessEvent.AfterStack, "Unity/VolumetricCloud_1")]
     public class VolumetricCloud : PostProcessEffectSettings
     {
         public BoolParameter enableDirectionalScattering = new BoolParameter { value = true };

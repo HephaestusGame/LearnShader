@@ -527,6 +527,8 @@ MonoBehaviour:
   m_AfterStackBundles:
   - assemblyQualifiedName: HepheastusGame.VolumetricCloud, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  - assemblyQualifiedName: HepheastusGame.VolumetricCloud2, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &1992705117
 MonoBehaviour:
   m_ObjectHideFlags: 0
