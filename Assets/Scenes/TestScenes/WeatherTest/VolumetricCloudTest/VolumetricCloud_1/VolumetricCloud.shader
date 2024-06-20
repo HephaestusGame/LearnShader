@@ -13,7 +13,7 @@ Shader "Hidden/PostProcessing/VolumetricCloud"
             #pragma multi_compile_local USE_AABB_BOUNDING_BOX  USE_CLOUD_LAYER_BOUNDING_BOX
             #pragma multi_compile_local _ USE_DETAIL_SHAPE_TEX
             #include "Packages/com.unity.postprocessing/PostProcessing/Shaders/StdLib.hlsl"
-            #include "CloudHelper.hlsl"
+            #include "../CloudHelper.hlsl"
             TEXTURE2D_SAMPLER2D(_MainTex, sampler_MainTex);
             TEXTURE2D_SAMPLER2D(_CameraDepthTexture, sampler_CameraDepthTexture);
 
