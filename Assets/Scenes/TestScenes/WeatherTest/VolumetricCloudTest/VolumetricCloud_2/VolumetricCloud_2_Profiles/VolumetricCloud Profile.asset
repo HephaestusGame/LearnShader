@@ -16,6 +16,22 @@ MonoBehaviour:
   enabled:
     overrideState: 1
     value: 1
+  cloudTexSize:
+    overrideState: 1
+    value: 2048
+  useHaltonSequence:
+    overrideState: 1
+    value: 1
+  blueNoise:
+    overrideState: 1
+    value: {fileID: 2800000, guid: 1e4cb589bf414451f8dc5eae5fe09263, type: 3}
+    defaultState: 1
+  blueNoiseAffectFactor:
+    overrideState: 1
+    value: 1
+  blueNoiseTiling:
+    overrideState: 1
+    value: {x: 1.7, y: 1}
   baseNoise:
     overrideState: 1
     value: {fileID: 2800000, guid: e09deeeaec0a3c547a3b72ad3d615255, type: 2}
@@ -39,12 +55,21 @@ MonoBehaviour:
   cloudDetailScale:
     overrideState: 1
     value: 1000
+  horizonFadeStart:
+    overrideState: 1
+    value: 0
+  horizonFadeEnd:
+    overrideState: 1
+    value: 0.18
+  cloudAlpha:
+    overrideState: 1
+    value: 1
   cloudDetailStrength:
     overrideState: 1
     value: 0.072
   cloudCoverage:
     overrideState: 1
-    value: 0.331
+    value: 0.561
   cloudCoverageBias:
     overrideState: 1
     value: 0.02
@@ -56,22 +81,31 @@ MonoBehaviour:
     value: 0.025
   cloudBottomSoftness:
     overrideState: 1
-    value: 0.4
+    value: 0.04
   cloudDensity:
     overrideState: 1
-    value: 0.313
+    value: 1
   lightningColor:
     overrideState: 0
     value: {r: 0.76, g: 0.83, b: 0.88, a: 1}
   cloudColor:
-    overrideState: 0
-    value: {r: 0.8431, g: 0.8431, b: 0.8431, a: 1}
+    overrideState: 1
+    value: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
   cloudAmbientColorBottom:
-    overrideState: 0
-    value: {r: 0.7549, g: 0.7903, b: 0.8207, a: 1}
+    overrideState: 1
+    value: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
   cloudAmbientColorTop:
+    overrideState: 1
+    value: {r: 0.764151, g: 0.764151, b: 0.764151, a: 1}
+  lightning:
     overrideState: 0
-    value: {r: 0.51, g: 0.55, b: 0.6, a: 1}
+    value: 0
+  cloudMovementSpeed:
+    overrideState: 1
+    value: 0
+  cloudTurbulenceSpeed:
+    overrideState: 1
+    value: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

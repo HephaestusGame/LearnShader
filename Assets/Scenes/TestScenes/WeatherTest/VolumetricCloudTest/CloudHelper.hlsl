@@ -1,6 +1,8 @@
 #ifndef CLOUD_HELPER_HLSL
+
 #define CLOUD_HELPER_HLSL
 
+#define PI              3.14159265359
 // #define PI 3.141592653
 
 struct CloudInfo

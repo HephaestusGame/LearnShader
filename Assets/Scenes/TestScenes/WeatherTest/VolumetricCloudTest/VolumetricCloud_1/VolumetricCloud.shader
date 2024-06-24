@@ -272,8 +272,6 @@ Shader "Hidden/PostProcessing/VolumetricCloud"
                 float4 cloudColor = CloudRayMarching(i.texcoord, _WorldSpaceCameraPos.xyz, worldViewDir);
 
                 float4 color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord);
-                color.rgb *= cloudColor.a;
-                color.rgb += cloudColor.rgb;
                 return float4(cloudColor.rgb + color.rgb * cloudColor.a,  cloudColor.a + color.a * cloudColor.a);
             }
             ENDHLSL
