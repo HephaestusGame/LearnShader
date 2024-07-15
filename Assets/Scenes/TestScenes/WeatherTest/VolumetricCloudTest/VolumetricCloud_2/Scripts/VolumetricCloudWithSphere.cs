@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -12,21 +9,27 @@ namespace HepheastusGame
         public Material skyMaterial;
         public Material cloudSphereMaterial;
 
+        public Light sun;
+        public Light moon;
         #region settings
 
+        [FoldoutGroup("CloudShapeTexture")]
+        public bool useCloudShapeCurve = true;
+        [FoldoutGroup("CloudShapeTexture")]
+        public AnimationCurve cloudShapeCurve = AnimationCurve.Linear(0, 0, 1, 1);
+        [FoldoutGroup("CloudShapeTexture")]
+        public Texture2D cloudShapeTexture = null;
+        [FoldoutGroup("CloudShapeTexture"), Range(8, 1024)]
+        public int cloudShapeTextureResolution = 512;
+        
         [Range(10, 200)]
         public int cloudDomeTrisCountX = 100;
         [Range(10, 50)]
         public int cloudDomeTrisCountY = 50;
-        [Range(128, 2048)]
+        [Range(128, 4096)]
         public int cloudTexSize = 1024;
 
         public bool useHaltonSequence = true;
-        public Texture blueNoise = null;
-        [Range(0.0f, 1.0f)]
-        public float blueNoiseAffectFactor = 1.0f;
-
-        public Vector2 blueNoiseTiling = new Vector2(1.7f, 1.0f);
         public Texture baseNoise = null;
         public Texture detailNoise = null;
         public float cloudBottom = 500;
@@ -51,6 +54,7 @@ namespace HepheastusGame
 
 
         public float attenuation = 1.5f;
+        public float moonAttenuation = 0.1f;
         public float cloudBaseEdgeSoftness = 0.025f;
         public float cloudBottomSoftness = 0.4f;
 
@@ -69,11 +73,15 @@ namespace HepheastusGame
         public float cloudTurbulenceSpeed = 50.0f;
 
         #endregion
+
+        private int _sunDirID = Shader.PropertyToID("_SunDir");
+        private int _moonDirID = Shader.PropertyToID("_MoonDir");
+       
+        private int _attenuationID = Shader.PropertyToID("_Attenuation");
+        private int _moonAttenuationID = Shader.PropertyToID("_MoonAttenuation");
         
         private int _cloudAlphaID = Shader.PropertyToID("_CloudAlpha");
-        private int _blueNoiseID = Shader.PropertyToID("_BlueNoise");
-        private int _blueNoiseAffectFactor = Shader.PropertyToID("_BlueNoiseAffectFactor");
-        private int _blueNoiseTilingID = Shader.PropertyToID("_BlueNoiseTiling");
+        private int _cloudShapeTextureID = Shader.PropertyToID("_CloudShapeTexture");
         private int _cloudBottomID = Shader.PropertyToID("_CloudBottom");
         private int _cloudHeightID = Shader.PropertyToID("_CloudHeight");
         private int _cloudMarchStepsID = Shader.PropertyToID("_CloudMarchSteps");
@@ -87,7 +95,6 @@ namespace HepheastusGame
         private int _detailNoiseID = Shader.PropertyToID("_DetailNoise");
         private int _cloudDetailStrengthID = Shader.PropertyToID("_CloudDetailStrength");
         private int _cloudDensityID = Shader.PropertyToID("_CloudDensity");
-        private int _attenuationID = Shader.PropertyToID("_Attenuation");
         private int _lightningID = Shader.PropertyToID("_Lightning");
         private int _horizonFadeStartID = Shader.PropertyToID("_HorizonFadeStart");
         private int _horizonFadeEndID = Shader.PropertyToID("_HorizonFadeEnd");
@@ -126,6 +133,8 @@ namespace HepheastusGame
             {
                 InitCloudBuffers();
                 
+                skyMaterial.SetVector(_sunDirID, sun.transform.forward);
+                skyMaterial.SetVector(_moonDirID, moon.transform.forward);
                 skyMaterial.SetFloat(_cloudMovementSpeedID, cloudMovementSpeed);
                 _baseCloudOffset += cloudMovementSpeed * Time.deltaTime;
                 _detailCloudOffset += cloudTurbulenceSpeed * Time.deltaTime;
@@ -134,9 +143,7 @@ namespace HepheastusGame
                 
                 skyMaterial.SetFloat(_texSizeID, cloudTexSize);
 
-                skyMaterial.SetFloat(_blueNoiseAffectFactor, blueNoiseAffectFactor);
-                skyMaterial.SetVector(_blueNoiseTilingID, blueNoiseTiling);
-                skyMaterial.SetFloat(_attenuationID, attenuation);
+                // skyMaterial.SetFloat(_attenuationID, attenuation);
                 skyMaterial.SetFloat(_cloudBottomID, cloudBottom);
                 skyMaterial.SetFloat(_cloudHeightID, cloudHeight);
                 skyMaterial.SetInt(_cloudMarchStepsID, cloudMarchSteps);
@@ -154,16 +161,56 @@ namespace HepheastusGame
                 
                 skyMaterial.SetColor(_lightningColorID, lightningColor);
                 skyMaterial.SetColor(_cloudColorID, cloudColor);
-                skyMaterial.SetColor(_cloudAmbientColorBottomID, cloudAmbientColorBottom);
-                skyMaterial.SetColor(_cloudAmbientColorTopID, cloudAmbientColorTop);
+                // skyMaterial.SetColor(_cloudAmbientColorBottomID, cloudAmbientColorBottom);
+                // skyMaterial.SetColor(_cloudAmbientColorTopID, cloudAmbientColorTop);
                 
                 skyMaterial.SetFloat(_lightningID, lightning);
                 SetRayMarchOffset();
+
+                CreateCloudShapeTextureFromCurve();
                 SetTextures();
 
                 RenderCloud();
                 
             }
+        }
+
+        
+        
+        private AnimationCurve _previousCurve = new AnimationCurve();
+        private void CreateCloudShapeTextureFromCurve()
+        {
+            if (!useCloudShapeCurve)
+            {
+                skyMaterial.DisableKeyword("USE_CLOUD_SHAPE_CURVE");
+                return;
+            }
+            skyMaterial.EnableKeyword("USE_CLOUD_SHAPE_CURVE");
+            
+            if (cloudShapeTexture == null)
+            {
+                cloudShapeTexture = new Texture2D(cloudShapeTextureResolution, 1, TextureFormat.RHalf, false, true);
+                cloudShapeTexture.filterMode = FilterMode.Bilinear;
+                cloudShapeTexture.wrapMode = TextureWrapMode.Clamp;
+            }
+            
+
+            if (cloudShapeCurve.Equals(_previousCurve))
+            {
+                // Debug.Log("Same curve, skipping texture creation");
+                return;
+            }
+            // Debug.Log("Creating new cloud shape texture");
+            
+            _previousCurve.CopyFrom(cloudShapeCurve);
+
+            for (int i = 0; i < cloudShapeTextureResolution; i++)
+            {
+                float percent = (float)i / cloudShapeTextureResolution;
+                float density = cloudShapeCurve.Evaluate(percent);
+                cloudShapeTexture.SetPixel(i, 0, new Color(density, density, density, 1));
+            }
+            cloudShapeTexture.Apply();
         }
         
         private int _lowResCloudBufferID = Shader.PropertyToID("_LowResCloudTex");
@@ -196,9 +243,9 @@ namespace HepheastusGame
         
         private void SetTextures()
         {
-            if (blueNoise != null)
+            if (cloudShapeTexture != null)
             {
-                skyMaterial.SetTexture(_blueNoiseID, blueNoise);    
+                skyMaterial.SetTexture(_cloudShapeTextureID, cloudShapeTexture);
             }
             
             if (baseNoise != null)

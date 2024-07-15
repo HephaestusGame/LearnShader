@@ -7,22 +7,27 @@ Shader "Cloud/VolumetricCloud2"
         {
             CGPROGRAM
             // #include "Packages/com.unity.postprocessing/PostProcessing/Shaders/StdLib.hlsl"
-            #include "../CloudHelper.hlsl"
+            #include "../../CloudHelper.hlsl"
             #include "UnityCG.cginc"
+
+            #pragma multi_compile_local _ USE_CLOUD_SHAPE_CURVE
 
             #pragma vertex vert
             #pragma fragment Frag
             #define EARTH_RADIUS  6371000
+            
 
             static const int CLOUD_SELF_SHADOW_STEPS = 5;
 
+            float3 _SunDir, _MoonDir;
+            float4 _SunColor, _MoonColor;
             float _TexSize;
             float2 _Jitter;
             
             //Unity 内置变量
             float4 _LightColor0;
 
-            sampler2D _BaseNoise, _BlueNoise;
+            sampler2D _BaseNoise, _BlueNoise, _CloudShapeTexture;
             sampler3D _DetailNoise;
 
             float4x4 _InverseProjectionMatrix, _InverseViewMatrix;
@@ -32,7 +37,7 @@ Shader "Cloud/VolumetricCloud2"
             float _CloudBearing;
             float _CloudBottom, _CloudHeight, _CloudBaseScale, _CloudDetailScale, _CloudDetailStrength;
             float _CloudBaseEdgeSoftness, _CloudBottomSoftness, _CloudCoverage, _CloudCoverageBias;
-            float _CloudDensity, _Attenuation, _CloudAlpha;
+            float _CloudDensity, _Attenuation, _MoonAttenuation, _CloudAlpha;
             float _CloudMovementSpeed, _BaseCloudOffset, _DetailCloudOffset;
             int _CloudMarchSteps;
 
@@ -74,9 +79,14 @@ Shader "Cloud/VolumetricCloud2"
                 float3 uv = (p + offset) * 0.00005f * _CloudBaseScale;
                 float3 cloud = tex2Dlod(_BaseNoise, float4(uv.xz, 0, 1.0f)).rgb - float3(0, 1.0f, 0.0f);
 
+                
                 //用函数去模拟云的形状
-                float n = norY * norY;
-                n += pow(1.0f - norY, 36);
+                #if defined(USE_CLOUD_SHAPE_CURVE)
+                    float n = 1 - tex2D(_CloudShapeTexture, float2(norY, 0.5)).r;
+                #else
+                    float n = norY * norY;
+                    n += pow(1.0f - norY, 36);
+                #endif
                 return Remap(cloud.r - n, cloud.g - n, 1.0f);
             }
 
@@ -140,24 +150,27 @@ Shader "Cloud/VolumetricCloud2"
                 return clamp(m * _CloudDensity * (1.0f + max((d - 7000.0f)*0.0005f, 0.0f)), 0.0f, 1.0f);//水平距离越远，密度越大，7000m范围内不变
             }
 
-            float VolumetricShadow(in float3 from , in float lightDotup, in float3 lightDir)
+            float VolumetricShadow(in float3 from , in float3 sunDir)
             {
+                float sunDotUp = max(0.0f, dot(float3(0, 1, 0), _SunDir));
+                
                 float dd = 12;
+                float3 rd = -sunDir;
                 float d = dd * 2.0f;
-	            float shadow = 1.0 * lerp(1.5, 1, lightDotup);
+	            float shadow = 1.0 * lerp(1.5, 1, sunDotUp);
                 
                 UNITY_LOOP
                 for (int step = 0; step < CLOUD_SELF_SHADOW_STEPS; step++)
                 {
-                    float3 pos = from  + lightDir * d;
+                    float3 pos = from  + rd * d;
                     float norY = (length(pos) - (EARTH_RADIUS + _CloudBottom)) / _CloudHeight;
                     if (norY > 1.0f)
                         return shadow;
 
-                    float muE =  CloudMap(pos, lightDir, norY);
+                    float muE =  CloudMap(pos, rd, norY);
                     shadow *= exp(-muE * dd / 8);//Beer衰减
 
-                    dd *= 1.0 * lerp(1.8, 1, lightDotup);
+                    dd *= 1.0 * lerp(1.8, 1, sunDotUp);
                     d += dd;
                 }
 
@@ -171,17 +184,20 @@ Shader "Cloud/VolumetricCloud2"
                 float end = IntersectCloudSphereInner(ro, rd, EARTH_RADIUS + _CloudBottom + _CloudHeight);
 
 
-                float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
-                float3 sunDir = float3(-0.342f, -0.8365533f, -0.428f);
-                lightDir = -sunDir;
-                lightDir = normalize(lightDir);
-                float viewDotLight = dot(rd, -lightDir);
-                float lightDotUp = max(0.0f, dot(float3(0, 1, 0), lightDir));
+                // float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
+                // float viewDotLight = dot(rd, -lightDir);
+                // float lightDotUp = max(0.0f, dot(float3(0, 1, 0), lightDir));
+
+                float sunDotRd = dot(rd, _SunDir);
+                float sunDotUp = max(0.0f, dot(float3(0, 1, 0), -_SunDir));
+
+                float moonDotRd = dot(rd, -_MoonDir);
+                float moonDotUp = max(0.0f, dot(float3(0, 1, 0), -_MoonDir));
 
 
                 float rdDotUp = dot(rd, float3(0, 1, 0));
-                if (rdDotUp < 0.0f)
-                    return float4(0, 0, 0, 1);
+                // if (rdDotUp < 0.0f)
+                //     return float4(0, 0, 0, 1);
                 //rdDotUp > 0.1f时用_CloudMarchSteps, < 0.1f用rdDotUp在10～_CloudMarchSteps之间插值
                 int nSteps = lerp(10, _CloudMarchSteps, lerp(rdDotUp, 1.0f, step(0.1, rdDotUp)));
 
@@ -193,17 +209,17 @@ Shader "Cloud/VolumetricCloud2"
                 float h = frac(_RaymarchOffset);
                 d -= dD * h;
 
-                float blueNoise = tex2D(_BlueNoise, uv * _BlueNoiseTiling).r;
-                d += dD * blueNoise * _BlueNoiseAffectFactor;
+                float scattering = lerp(HenyeyGreensteinNoPi(sunDotRd, 0.8f),
+                    HenyeyGreensteinNoPi(sunDotRd, -0.35f), 0.65f);
 
-                float scattering = lerp(HenyeyGreensteinNoPi(viewDotLight, 0.8f),
-                    HenyeyGreensteinNoPi(viewDotLight, -0.35f), 0.65f);
+                float moonScattering = lerp(HenyeyGreensteinNoPi(moonDotRd, 0.3f),
+                    HenyeyGreensteinNoPi(moonDotRd, 0.75f), 0.5f);
 
                 float transmittance = 1.0f;
                 float3 scatteredLight = 0.0f;
 
                 float3 lightningColorBottom = 0.0f;
-                float3 lightningColorTop = _CloudAmbientColorTop + _LightningColor * lerp(0.35f, 0.75f, lightDotUp);
+                float3 lightningColorTop = _CloudAmbientColorTop + _LightningColor * lerp(0.35f, 0.75f, sunDotUp);
                 float lightningBottomFactor = saturate(_Lightning * 3.0f);
                 float lightningTopFactor = saturate(_Lightning * 10.0f);
                 
@@ -223,27 +239,31 @@ Shader "Cloud/VolumetricCloud2"
 
 
                         //对云层颜色进行微调，减去一定的颜色，顶部减更多
-                        float3 cloudBottomColor = _CloudAmbientColorBottom - detail2.r * lerp(0.25, 0.75, lightDotUp) * (lerp(0.2, 0.05, _CloudCoverage) * _Attenuation * 0.4f);
-                        float3 cloudTopColor = _CloudAmbientColorTop - detail2.r * lerp(1, 4, lightDotUp) * (0.1 * _Attenuation * 0.9);
+                        float3 cloudBottomColor = _CloudAmbientColorBottom - detail2.r * lerp(0.25, 0.75, sunDotUp) * (lerp(0.2, 0.05, _CloudCoverage) * _Attenuation * 0.4f);
+                        float3 cloudTopColor = _CloudAmbientColorTop - detail2.r * lerp(1, 4, sunDotUp) * (0.1 * _Attenuation * 0.9);
                         float3 ambientLight = lerp(
 				        lerp(cloudBottomColor, lightningColorBottom, lightningBottomFactor),
 				        lerp(cloudTopColor, lightningColorTop, lightningTopFactor),
 				        norY) * _CloudColor;
 
 
-                        float3 light = _LightColor0.rgb * _Attenuation * 1.5f * smoothstep(0.04, 0.055, lightDotUp);
+                        float3 light = _SunColor * _Attenuation * 1.5f * smoothstep(0.04, 0.055, sunDotUp);
                         //对光照进行调整，云层底部更暗
-                        light *= smoothstep(-0.03f, 0.075f, lightDotUp) -
+                        light *= smoothstep(-0.03f, 0.075f, sunDotUp) -
                             lerp(clamp(lerp(detail2.r * 1.6, detail3.r * 1.6, norY ), 0.75, 0.9),
                                 clamp(detail3.r * 1.3, 0, 0.8),
                                 norY * 4);
                         //Smooth opposite clouds
-			            light *= lerp(smoothstep(0.99f, 0.55f, lightDotUp), 1.0f, smoothstep(0.1, 0.99f, lightDotUp));
+			            light *= lerp(smoothstep(0.99f, 0.55f, sunDotRd), 1.0f, smoothstep(0.1, 0.99f, sunDotUp));
+
+                        float3 moonLight = _MoonColor * _MoonAttenuation * 0.6f * smoothstep(0.11, 0.35, moonDotUp);
+                        moonLight *= smoothstep(-0.03f, 0.075f, moonDotUp);
 
 
                          float3 S = (
                                 ambientLight + 
-                                light * (scattering * VolumetricShadow(p, viewDotLight, lightDir))
+                                light * (scattering * VolumetricShadow(p, _SunDir))+
+                                moonLight * (moonScattering * VolumetricShadow(p, _MoonDir))
                                 )
                                 * alpha;
 
@@ -318,10 +338,9 @@ Shader "Cloud/VolumetricCloud2"
                 float cos2 = lon.x / length(lon);
                 float sin2 = lon.y / length(lon);
                 float3 pos = float3(sin1 * cos2, cos1, sin1 * sin2);
-                // float3 pos = float3(cos1 * cos2, sin1, cos1 * sin2);
                 float3 rd = normalize(pos);
                 
-                float4 cloudColor;
+                float4 cloudColor = 0.0;
                 RenderClouds(cloudColor, 0, rd, i.uv);
 
                 float rdDotUp = dot(float3(0, 1, 0), rd);
