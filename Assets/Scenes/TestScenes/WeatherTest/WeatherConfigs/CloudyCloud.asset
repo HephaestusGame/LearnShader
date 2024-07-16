@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb077f09f9d044223ae1dd7b822c7998, type: 3}
+  m_Name: CloudyCloud
+  m_EditorClassIdentifier: 
+  profileName: Cloudy
+  bottom: 500
+  height: 800
+  coverage: 0.3
+  coverageBias: 0.01
+  baseEdgeSoftness: 0.2
+  bottomSoftness: 0.4
+  density: 1
+  baseScale: 1.72
+  detailScale: 1000
+  detailStrength: 0.072

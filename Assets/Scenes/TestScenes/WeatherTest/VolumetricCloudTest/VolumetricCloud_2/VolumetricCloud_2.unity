@@ -380,7 +380,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f17229d32b1a44412babab839c6b31ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dayTime: 18.9
+  dayTime: 7.67
   sunIntensity: 1
   sunRevolution: -90
   sunAttenuationMultiplier: 1
@@ -416,7 +416,97 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 6
     m_NumAlphaKeys: 2
+  regularSunColor:
+    serializedVersion: 2
+    key0: {r: 0.17646985, g: 0.12102808, b: 0.07843174, a: 1}
+    key1: {r: 0.7075472, g: 0.31497002, b: 0.11681202, a: 1}
+    key2: {r: 0.5566038, g: 0.5529281, b: 0.53822535, a: 0}
+    key3: {r: 0.5566038, g: 0.5529281, b: 0.53822535, a: 0}
+    key4: {r: 0.7075472, g: 0.31497002, b: 0.11681202, a: 0}
+    key5: {r: 0.17646985, g: 0.12102808, b: 0.07843174, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 15521
+    ctime1: 18396
+    ctime2: 22803
+    ctime3: 45223
+    ctime4: 49630
+    ctime5: 53654
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 6
+    m_NumAlphaKeys: 2
+  stormySunColor:
+    serializedVersion: 2
+    key0: {r: 0.16915749, g: 0.16886055, b: 0.16863348, a: 1}
+    key1: {r: 0.28024396, g: 0.3086506, b: 0.34799802, a: 1}
+    key2: {r: 0.6529459, g: 0.66882735, b: 0.6886792, a: 0}
+    key3: {r: 0.6529459, g: 0.66882735, b: 0.6886792, a: 0}
+    key4: {r: 0.28024396, g: 0.3086506, b: 0.34799802, a: 0}
+    key5: {r: 0.16915749, g: 0.16886055, b: 0.16863348, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 15521
+    ctime1: 18396
+    ctime2: 22803
+    ctime3: 45223
+    ctime4: 49630
+    ctime5: 53654
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 6
+    m_NumAlphaKeys: 2
   moonLightColor: {r: 0.32941177, g: 0.36862746, b: 0.3882353, a: 1}
+  cloudBaseColor:
+    serializedVersion: 2
+    key0: {r: 0.12237452, g: 0.16496086, b: 0.20754719, a: 1}
+    key1: {r: 0.094562136, g: 0.12920174, b: 0.16037738, a: 1}
+    key2: {r: 0.27549842, g: 0.34041992, b: 0.38679248, a: 0}
+    key3: {r: 0.51548594, g: 0.5547249, b: 0.6037736, a: 0}
+    key4: {r: 0.51548594, g: 0.5547249, b: 0.6037736, a: 0}
+    key5: {r: 0.27549842, g: 0.34041992, b: 0.38679248, a: 0}
+    key6: {r: 0.094562136, g: 0.12920174, b: 0.16037738, a: 0}
+    key7: {r: 0.12237452, g: 0.16496086, b: 0.20754719, a: 0}
+    ctime0: 0
+    ctime1: 16515
+    ctime2: 19430
+    ctime3: 22282
+    ctime4: 46373
+    ctime5: 49630
+    ctime6: 52505
+    ctime7: 65535
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 8
+    m_NumAlphaKeys: 2
   cloudLightColor:
     serializedVersion: 2
     key0: {r: 0.33454967, g: 0.36744392, b: 0.3962264, a: 1}
@@ -447,7 +537,7 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 8
     m_NumAlphaKeys: 2
-  cloudBaseColor:
+  regularCloudBaseColor:
     serializedVersion: 2
     key0: {r: 0.12237452, g: 0.16496086, b: 0.20754719, a: 1}
     key1: {r: 0.094562136, g: 0.12920174, b: 0.16037738, a: 1}
@@ -464,6 +554,96 @@ MonoBehaviour:
     ctime4: 46373
     ctime5: 49630
     ctime6: 52505
+    ctime7: 65535
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 8
+    m_NumAlphaKeys: 2
+  stormyCloudBaseColor:
+    serializedVersion: 2
+    key0: {r: 0.08094556, g: 0.132008, b: 0.16037738, a: 1}
+    key1: {r: 0.08094556, g: 0.132008, b: 0.16037738, a: 1}
+    key2: {r: 0.37735996, g: 0.37557995, b: 0.37557995, a: 0}
+    key3: {r: 0.32974517, g: 0.33693188, b: 0.35849205, a: 0}
+    key4: {r: 0.32974517, g: 0.33693188, b: 0.35849205, a: 0}
+    key5: {r: 0.37735996, g: 0.37557995, b: 0.37557995, a: 0}
+    key6: {r: 0.08094556, g: 0.132008, b: 0.16037738, a: 0}
+    key7: {r: 0.08094556, g: 0.132008, b: 0.16037738, a: 0}
+    ctime0: 0
+    ctime1: 16515
+    ctime2: 19430
+    ctime3: 22282
+    ctime4: 46373
+    ctime5: 49630
+    ctime6: 52505
+    ctime7: 65535
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 8
+    m_NumAlphaKeys: 2
+  regularCloudLightColor:
+    serializedVersion: 2
+    key0: {r: 0.33454967, g: 0.36744392, b: 0.3962264, a: 1}
+    key1: {r: 0.21586867, g: 0.26513427, b: 0.31132078, a: 1}
+    key2: {r: 1, g: 0.70343137, b: 0.5514706, a: 0}
+    key3: {r: 0.7549395, g: 0.79037845, b: 0.8207547, a: 0}
+    key4: {r: 0.7549395, g: 0.79037845, b: 0.8207547, a: 0}
+    key5: {r: 1, g: 0.70343137, b: 0.5514706, a: 0}
+    key6: {r: 0.21586867, g: 0.26513427, b: 0.31132078, a: 0}
+    key7: {r: 0.33454967, g: 0.36744392, b: 0.3962264, a: 0}
+    ctime0: 0
+    ctime1: 16515
+    ctime2: 19398
+    ctime3: 22282
+    ctime4: 46453
+    ctime5: 49630
+    ctime6: 52888
+    ctime7: 65535
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_ColorSpace: -1
+    m_NumColorKeys: 8
+    m_NumAlphaKeys: 2
+  stormyCloudLightColor:
+    serializedVersion: 2
+    key0: {r: 0.21586867, g: 0.26513427, b: 0.31132078, a: 1}
+    key1: {r: 0.21586867, g: 0.26513427, b: 0.31132078, a: 1}
+    key2: {r: 0.8962264, g: 0.8962264, b: 0.8962264, a: 0}
+    key3: {r: 0.8962264, g: 0.8962264, b: 0.8962264, a: 0}
+    key4: {r: 0.8962264, g: 0.8962264, b: 0.8962264, a: 0}
+    key5: {r: 0.8962264, g: 0.8962264, b: 0.8962264, a: 0}
+    key6: {r: 0.21586867, g: 0.26513427, b: 0.31132078, a: 0}
+    key7: {r: 0.21586867, g: 0.26513427, b: 0.31132078, a: 0}
+    ctime0: 0
+    ctime1: 16515
+    ctime2: 19398
+    ctime3: 22282
+    ctime4: 46453
+    ctime5: 49630
+    ctime6: 52888
     ctime7: 65535
     atime0: 0
     atime1: 65535
@@ -590,6 +770,59 @@ MonoBehaviour:
     m_RotationOrder: 4
   sunLight: {fileID: 1908628007}
   celestialAxisTransform: {fileID: 70837097}
+  cloudTransitionDuration: 5
+  weatherConfigs:
+  - {fileID: 11400000, guid: 08bf9692d71c64b5caf92831a61f4490, type: 2}
+  - {fileID: 11400000, guid: b30f7283c787049f6ae99d7af20eb1a3, type: 2}
+--- !u!1 &841416106
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 841416107}
+  - component: {fileID: 841416108}
+  m_Layer: 6
+  m_Name: PostProcessing
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &841416107
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 841416106}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -11.746648, y: 0.97990835, z: -5.4128127}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &841416108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 841416106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sharedProfile: {fileID: 11400000, guid: 8a82e05318f1f41a8ba6d308fddf6556, type: 2}
+  isGlobal: 1
+  blendDistance: 0
+  weight: 1
+  priority: 0
 --- !u!1 &896685424
 GameObject:
   m_ObjectHideFlags: 0
@@ -700,8 +933,6 @@ MonoBehaviour:
   horizonFadeEnd: 0.18
   cloudAlpha: 1
   cloudDetailStrength: 0.072
-  cloudCoverage: 0.266
-  cloudCoverageBias: 0.02
   attenuation: 1.5
   moonAttenuation: 0.1
   cloudBaseEdgeSoftness: 0.025
@@ -1119,3 +1350,4 @@ SceneRoots:
   m_Roots:
   - {fileID: 1842050837}
   - {fileID: 504340865}
+  - {fileID: 841416107}

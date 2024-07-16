@@ -1,5 +1,41 @@
 Shader "Cloud/VolumetricCloud2"
 {
+    Properties
+    {
+        
+        _SunColor("Sun Color", Color) = (1, 1, 1, 1)
+        _MoonColor("Moon Color", Color) = (1, 1, 1, 1)
+        _MoonAttenuation("Moon Attenuation", Float) = 0.1
+        
+        _CloudBottom("Cloud Bottom", Float) = 500
+        _CloudHeight("Cloud Height", Float) = 800
+        
+        _CloudCoverage ("Cloud Coverage", Range(0, 1)) = 0.3
+        _CloudCoverageBias ("Cloud Coverage Bias", Range(-1, 1)) = 0.0
+        
+        _Attenuation("Attenuation", Float) = 1.0
+        _CloudMovementSpeed("Cloud Movement Speed", Range(0.0, 150)) = 150
+        _CloudTurbulenceSpeed("Cloud Turbulence Speed", Range(0.0, 50)) = 50
+        
+        _CloudDetailStrength("Cloud Detail Strength", Range(0, 1)) = 0.5
+        _CloudBaseEdgeSoftness("Cloud Base Edge Softness", Float) = 0.025
+        _CloudBottomSoftness("Cloud Bottom Softness", Float) = 0.4
+        _CloudDensity("Cloud Density", Range(0., 1.0)) = 1.0
+        
+
+        _CloudAmbientColorTop("Cloud Ambient Color Top", Color) = (0.87674, 0.98235, 1.1764, 0.0)
+        _CloudAmbientColorBottom("Cloud Ambient Color Bottom", Color) = (0.2294, 0.3941, 0.5117, 0.0)
+        _CloudBaseScale("Cloud Base Scale", Float) = 1.72
+        _CloudDetailScale("Cloud Detail Scale", Float) = 1000
+       
+        _HorizonFadeStart("Horizon Fade Start", Float) = 0
+        _HorizonFadeEnd("Horizon Fade End", Float) = 0.18
+        _HorizonColorFadeStart("Horizon Color Fade Start", Float) = -0.2
+        _HorizonColorFadeEnd("Horizon Color Fade End", Float) = 0.32
+        
+        _CloudAlpha("Cloud Alpha", Range(0.0, 5)) = 3.25
+        
+    }
     SubShader
     {
         Cull Off ZWrite Off ZTest Always
@@ -38,13 +74,13 @@ Shader "Cloud/VolumetricCloud2"
             float _CloudBottom, _CloudHeight, _CloudBaseScale, _CloudDetailScale, _CloudDetailStrength;
             float _CloudBaseEdgeSoftness, _CloudBottomSoftness, _CloudCoverage, _CloudCoverageBias;
             float _CloudDensity, _Attenuation, _MoonAttenuation, _CloudAlpha;
-            float _CloudMovementSpeed, _BaseCloudOffset, _DetailCloudOffset;
+            float _CloudMovementSpeed, _CloudTurbulenceSpeed, _BaseCloudOffset, _DetailCloudOffset;
             int _CloudMarchSteps;
 
             float3 _LightningColor;
             float _Lightning;
 
-            float _HorizonFadeStart, _HorizonFadeEnd;
+            float _HorizonFadeStart, _HorizonFadeEnd, _HorizonColorFadeStart, _HorizonColorFadeEnd;
             
             float _RaymarchOffset, _BlueNoiseAffectFactor;
             float2 _BlueNoiseTiling;
@@ -346,13 +382,14 @@ Shader "Cloud/VolumetricCloud2"
                 float rdDotUp = dot(float3(0, 1, 0), rd);
 
                 float sstep = smoothstep(_HorizonFadeStart, _HorizonFadeEnd, rdDotUp);
+                float sstep2 = smoothstep(_HorizonColorFadeStart, _HorizonColorFadeEnd, rdDotUp);
                 float4 final = 0;
                 
 
                 final = float4(
 				lerp(_CloudAmbientColorBottom.rgb * _CloudAlpha * (1.0 - Remap(_CloudCoverage + _CloudCoverageBias, 0.77, 0.25)),
-					cloudColor.rgb*1.035 * sstep,
-					sstep),
+					cloudColor.rgb*1.035 * sstep * sstep2,
+					sstep * sstep2),
 				lerp(
 				    (1.0 - Remap(_CloudCoverage + _CloudCoverageBias, 0.9, 0.185)),
 				    (1.0 - cloudColor.a) * sstep,

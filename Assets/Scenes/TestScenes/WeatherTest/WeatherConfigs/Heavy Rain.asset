@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17ebd6cb754b1438890b30d25eb963f5, type: 3}
+  m_Name: Heavy Rain
+  m_EditorClassIdentifier: 
+  weatherConfigName: Heavy Rain
+  weatherType: 0
+  isPrecipitationWeatherType: 1
+  sunIntensity: 1
+  cloudProfile: {fileID: 11400000, guid: 2f255e0ce0076425ea13404d80ccf8dd, type: 2}
+  useWeatherSound: 0
+  weatherVolume: 1
+  weatherSound: {fileID: 0}
+  useWeatherEffect: 1
+  wetherEffect: {fileID: 8454394913728979846, guid: 39f6db9c334d84a199a0fcbac702db7d, type: 3}
+  particleEffectAmount: 200
+  particleEffectPos: {x: 0, y: 28, z: 0}

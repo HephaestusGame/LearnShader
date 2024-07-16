@@ -47,11 +47,6 @@ namespace HepheastusGame
         public float cloudAlpha = 1.0f;
 
         public float cloudDetailStrength = 0.072f;
-        [Range(0.0f, 1.0f)]
-        public float cloudCoverage = 0.5f;
-        [Range(-1.0f, 1.0f)]
-        public float cloudCoverageBias = 0.02f;
-
 
         public float attenuation = 1.5f;
         public float moonAttenuation = 0.1f;
@@ -82,8 +77,7 @@ namespace HepheastusGame
         
         private int _cloudAlphaID = Shader.PropertyToID("_CloudAlpha");
         private int _cloudShapeTextureID = Shader.PropertyToID("_CloudShapeTexture");
-        private int _cloudBottomID = Shader.PropertyToID("_CloudBottom");
-        private int _cloudHeightID = Shader.PropertyToID("_CloudHeight");
+
         private int _cloudMarchStepsID = Shader.PropertyToID("_CloudMarchSteps");
         private int _cloudCoverageID = Shader.PropertyToID("_CloudCoverage");
         private int _cloudCoverageBiasID = Shader.PropertyToID("_CloudCoverageBias");
@@ -91,10 +85,11 @@ namespace HepheastusGame
         private int _cloudBottomSoftnessID = Shader.PropertyToID("_CloudBottomSoftness");
         private int _cloudBaseScaleID = Shader.PropertyToID("_CloudBaseScale");
         private int _cloudDetailScaleID = Shader.PropertyToID("_CloudDetailScale");
-        private int _baseNoiseID = Shader.PropertyToID("_BaseNoise");
-        private int _detailNoiseID = Shader.PropertyToID("_DetailNoise");
         private int _cloudDetailStrengthID = Shader.PropertyToID("_CloudDetailStrength");
         private int _cloudDensityID = Shader.PropertyToID("_CloudDensity");
+        
+        private int _baseNoiseID = Shader.PropertyToID("_BaseNoise");
+        private int _detailNoiseID = Shader.PropertyToID("_DetailNoise");
         private int _lightningID = Shader.PropertyToID("_Lightning");
         private int _horizonFadeStartID = Shader.PropertyToID("_HorizonFadeStart");
         private int _horizonFadeEndID = Shader.PropertyToID("_HorizonFadeEnd");
@@ -105,6 +100,7 @@ namespace HepheastusGame
         private int _cloudAmbientColorTopID = Shader.PropertyToID("_CloudAmbientColorTop");
 
         private int _cloudMovementSpeedID = Shader.PropertyToID("_CloudMovementSpeed");
+        private int _cloudTurbulenceSpeedID = Shader.PropertyToID("_CloudTurbulenceSpeed");
         private int _baseCloudOffsetID = Shader.PropertyToID("_BaseCloudOffset");
         private int _detailCloudOffsetID = Shader.PropertyToID("_DetailCloudOffset");
         private int _texSizeID = Shader.PropertyToID("_TexSize");
@@ -136,6 +132,7 @@ namespace HepheastusGame
                 skyMaterial.SetVector(_sunDirID, sun.transform.forward);
                 skyMaterial.SetVector(_moonDirID, moon.transform.forward);
                 skyMaterial.SetFloat(_cloudMovementSpeedID, cloudMovementSpeed);
+                skyMaterial.SetFloat(_cloudTurbulenceSpeedID, cloudTurbulenceSpeed);
                 _baseCloudOffset += cloudMovementSpeed * Time.deltaTime;
                 _detailCloudOffset += cloudTurbulenceSpeed * Time.deltaTime;
                 skyMaterial.SetFloat(_baseCloudOffsetID, _baseCloudOffset);
@@ -143,26 +140,16 @@ namespace HepheastusGame
                 
                 skyMaterial.SetFloat(_texSizeID, cloudTexSize);
 
-                // skyMaterial.SetFloat(_attenuationID, attenuation);
-                skyMaterial.SetFloat(_cloudBottomID, cloudBottom);
-                skyMaterial.SetFloat(_cloudHeightID, cloudHeight);
+
                 skyMaterial.SetInt(_cloudMarchStepsID, cloudMarchSteps);
-                skyMaterial.SetFloat(_cloudBaseScaleID, cloudBaseScale);
-                skyMaterial.SetFloat(_cloudDetailScaleID, cloudDetailScale);
-                skyMaterial.SetFloat(_cloudDetailStrengthID, cloudDetailStrength);
-                skyMaterial.SetFloat(_cloudCoverageID, cloudCoverage);
-                skyMaterial.SetFloat(_cloudCoverageBiasID, cloudCoverageBias);
-                skyMaterial.SetFloat(_cloudBaseEdgeSoftnessID, cloudBaseEdgeSoftness);
-                skyMaterial.SetFloat(_cloudBottomSoftnessID, cloudBottomSoftness);
-                skyMaterial.SetFloat(_cloudDensityID, cloudDensity);
+                
                 skyMaterial.SetFloat(_horizonFadeStartID, horizonFadeStart);
                 skyMaterial.SetFloat(_horizonFadeEndID, horizonFadeEnd);
                 skyMaterial.SetFloat(_cloudAlphaID, cloudAlpha);
                 
                 skyMaterial.SetColor(_lightningColorID, lightningColor);
                 skyMaterial.SetColor(_cloudColorID, cloudColor);
-                // skyMaterial.SetColor(_cloudAmbientColorBottomID, cloudAmbientColorBottom);
-                // skyMaterial.SetColor(_cloudAmbientColorTopID, cloudAmbientColorTop);
+
                 
                 skyMaterial.SetFloat(_lightningID, lightning);
                 SetRayMarchOffset();
@@ -300,6 +287,7 @@ namespace HepheastusGame
             }
             RenderTexture.ReleaseTemporary(_lowResCloudBuffer);
         }
+        
         #region HaltonSequence Offset
 
         static readonly int[] _haltonSequence = {
