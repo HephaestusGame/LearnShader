@@ -72,6 +72,7 @@ namespace HepheastusGame
                 {
                     ParticleSystem ps = Instantiate(config.wetherEffect, Vector3.zero, Quaternion.identity,
                         weatherEffectRoot.transform);
+                    ps.transform.localPosition = config.particleEffectPos;
                     ParticleSystem.EmissionModule emission = ps.emission;
                     emission.enabled = true;
                     emission.rateOverTime = new ParticleSystem.MinMaxCurve(0);
@@ -206,9 +207,6 @@ namespace HepheastusGame
                 yield return null;
             }
         }
-
-        
-        
         
 
         private Coroutine _changeSunColorCoroutine;

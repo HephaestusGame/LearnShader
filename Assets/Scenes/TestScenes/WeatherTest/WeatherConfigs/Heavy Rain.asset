@@ -22,5 +22,5 @@ MonoBehaviour:
   weatherSound: {fileID: 0}
   useWeatherEffect: 1
   wetherEffect: {fileID: 8454394913728979846, guid: 39f6db9c334d84a199a0fcbac702db7d, type: 3}
-  particleEffectAmount: 200
-  particleEffectPos: {x: 0, y: 28, z: 0}
+  particleEffectAmount: 1000
+  particleEffectPos: {x: 0, y: 100, z: -50}
