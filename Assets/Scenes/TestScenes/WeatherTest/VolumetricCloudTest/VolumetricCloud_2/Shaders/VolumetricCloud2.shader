@@ -186,6 +186,8 @@ Shader "Cloud/VolumetricCloud2"
                 return clamp(m * _CloudDensity * (1.0f + max((d - 7000.0f)*0.0005f, 0.0f)), 0.0f, 1.0f);//水平距离越远，密度越大，7000m范围内不变
             }
 
+
+            //根据 Beer 定律计算出当前步进点的光照强度
             float VolumetricShadow(in float3 from , in float3 sunDir)
             {
                 float sunDotUp = max(0.0f, dot(float3(0, 1, 0), _SunDir));
@@ -204,7 +206,8 @@ Shader "Cloud/VolumetricCloud2"
                         return shadow;
 
                     float muE =  CloudMap(pos, rd, norY);
-                    shadow *= exp(-muE * dd / 8);//Beer衰减
+                    //Beer衰减， muE * dd为当前步进区间密度,这里除以 8 做调整，让密度更低，透光率更高
+                    shadow *= exp(-muE * dd / 8);
 
                     dd *= 1.0 * lerp(1.8, 1, sunDotUp);
                     d += dd;
@@ -213,18 +216,13 @@ Shader "Cloud/VolumetricCloud2"
                 return shadow;
             }            
 
-            float4 RenderCloudsInternal(float3 ro, float3 rd, float2 uv)
+            float4 RenderCloudsInternal(float3 ro, float3 rd)
             {
                 ro.y = EARTH_RADIUS + ro.y;
                 float start = IntersectCloudSphereInner(ro, rd, EARTH_RADIUS + _CloudBottom);
                 float end = IntersectCloudSphereInner(ro, rd, EARTH_RADIUS + _CloudBottom + _CloudHeight);
 
-
-                // float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
-                // float viewDotLight = dot(rd, -lightDir);
-                // float lightDotUp = max(0.0f, dot(float3(0, 1, 0), lightDir));
-
-                float sunDotRd = dot(rd, _SunDir);
+                float sunDotRd = dot(rd, -_SunDir);
                 float sunDotUp = max(0.0f, dot(float3(0, 1, 0), -_SunDir));
 
                 float moonDotRd = dot(rd, -_MoonDir);
@@ -232,12 +230,7 @@ Shader "Cloud/VolumetricCloud2"
 
 
                 float rdDotUp = dot(rd, float3(0, 1, 0));
-                // if (rdDotUp < 0.0f)
-                //     return float4(0, 0, 0, 1);
-                //rdDotUp > 0.1f时用_CloudMarchSteps, < 0.1f用rdDotUp在10～_CloudMarchSteps之间插值
-                int nSteps = lerp(10, _CloudMarchSteps, lerp(rdDotUp, 1.0f, step(0.1, rdDotUp)));
-
-                nSteps = lerp(10, _CloudMarchSteps, rdDotUp);
+                int nSteps = lerp(20, _CloudMarchSteps, rdDotUp);
                 float d = start;
                 float dD = min(100.0f, (end - start) / float(nSteps));
 
@@ -270,10 +263,11 @@ Shader "Cloud/VolumetricCloud2"
                     float alpha = CloudMap(p, rd, norY);
                     if (alpha > 0.005f)
                     {
+                        //区间透光率
+                        float dTrans = exp(-alpha * dD);
+                        
                         float3 detail2 = CloudMapDetail(p * 0.35, norY, 1.0);
 			            float3 detail3 = CloudMapDetail(p * 1, norY, 1.0);
-
-
                         //对云层颜色进行微调，减去一定的颜色，顶部减更多
                         float3 cloudBottomColor = _CloudAmbientColorBottom - detail2.r * lerp(0.25, 0.75, sunDotUp) * (lerp(0.2, 0.05, _CloudCoverage) * _Attenuation * 0.4f);
                         float3 cloudTopColor = _CloudAmbientColorTop - detail2.r * lerp(1, 4, sunDotUp) * (0.1 * _Attenuation * 0.9);
@@ -296,25 +290,28 @@ Shader "Cloud/VolumetricCloud2"
                         moonLight *= smoothstep(-0.03f, 0.075f, moonDotUp);
 
 
-                         float3 S = (
+                        //一般模拟的光照应该按照如下计算
+                        // float3 S = (
+                        //         ambientLight + 
+                        //         light * (scattering * VolumetricShadow(p, _SunDir))+
+                        //         moonLight * (moonScattering * VolumetricShadow(p, _MoonDir))
+                        //         )
+                        //         * alpha * dD;
+                        // scatteredLight += transmittance * S;
+
+                        //这里做了微调，让最终的结果更加平滑（原理未知）
+                        float3 S = (
                                 ambientLight + 
                                 light * (scattering * VolumetricShadow(p, _SunDir))+
                                 moonLight * (moonScattering * VolumetricShadow(p, _MoonDir))
-                                )
-                                * alpha;
-
-                        //区间透光率
-                        float dTrans = exp(-alpha * dD);
-
-                        float3 Sint = (S - (S * dTrans)) * (1.0f / alpha);//实际上就是没乘上alpha的S * (1 - dTrans)
+                                );
+                        float3 Sint = (S - (S * dTrans));//实际上就是没乘上alpha的S * (1 - dTrans)
                         scatteredLight += transmittance * Sint;
-
-                        // S *= transmittance * dD;
-                        // scatteredLight += S;
                         
                         transmittance *= dTrans;
                     }
 
+                    //透光率低于一定数值，对最终光照累加影响已经很小，退出循环
                     if (transmittance <= 0.035f) break;
 
                     d += dD;
@@ -323,11 +320,11 @@ Shader "Cloud/VolumetricCloud2"
                 return float4(scatteredLight, transmittance);
             }
 
-            void RenderClouds(out float4 cloudColor, in float3 ro, in float3 rd, float2 uv)
+            void RenderClouds(out float4 cloudColor, in float3 ro, in float3 rd)
             {
                 cloudColor = float4(0, 0, 0, 1);
 
-                cloudColor = RenderCloudsInternal(ro, rd, uv);
+                cloudColor = RenderCloudsInternal(ro, rd);
                 if (cloudColor.w > 1.0f)
                 {
                     cloudColor = float4(0, 0, 0, 1);
@@ -377,7 +374,7 @@ Shader "Cloud/VolumetricCloud2"
                 float3 rd = normalize(pos);
                 
                 float4 cloudColor = 0.0;
-                RenderClouds(cloudColor, 0, rd, i.uv);
+                RenderClouds(cloudColor, 0, rd);
 
                 float rdDotUp = dot(float3(0, 1, 0), rd);
 
@@ -440,6 +437,7 @@ Shader "Cloud/VolumetricCloud2"
                 return (v - s) / (e - s);
             }
 
+            //计算出当前 UV 坐标与 Jitter 坐标的距离，距离越远，用 preTex 里的颜色，距离越近，用当前 tex 的颜色
             half CurrentCorrect(float2 uv, float2 jitter) {
                 float2 texelRelativePos = floor(fmod(uv * _TexSize, 4.0)); //between (0, 4.0)
 
