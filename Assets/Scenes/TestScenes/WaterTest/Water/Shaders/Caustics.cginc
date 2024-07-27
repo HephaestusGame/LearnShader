@@ -1,7 +1,7 @@
 #ifndef CAUSTICS_INCLUDED
 #define CAUSTICS_INCLUDED
 
-#include "DepthUtils.cginc"
+#include "Assets/Scenes/TestScenes/ShaderUtils/DepthUtils.cginc"
 float _CausticsIntensity;
 float4 _CausticsPlane;//xyz:waterPlane 的世界空间法向量，w : waterPlane的原点世界坐标向量在其法向量上的投影
 float4 _CausticsRange;//xy:waterPlane原点世界坐标的 xz, z：0.5 * waterPlaneWidth w: 0.5 * waterPlaneHeight

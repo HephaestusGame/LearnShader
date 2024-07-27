@@ -109,7 +109,7 @@ Shader "Unlit/Water"
             #include "WaterSSR.cginc"
             #include "InteractiveWaterUtils.cginc"
             #include "Foam.cginc"
-            #include "DepthUtils.cginc"
+            #include "Assets/Scenes/TestScenes/ShaderUtils/DepthUtils.cginc"
             #include "Caustics.cginc"
 
             struct appdata

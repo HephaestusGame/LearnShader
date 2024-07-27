@@ -1,7 +1,7 @@
 #ifndef WATER_FOAM_INCLUDED
 #define WATER_FOAM_INCLUDED
 
-#include "DepthUtils.cginc"
+#include "Assets/Scenes/TestScenes/ShaderUtils/DepthUtils.cginc"
 sampler2D _FoamNoiseTex, _FoamTex;
 float4 _FoamTex_TexelSize;
 float4 _FoamNoiseTex_ST, _FoamTex_ST;
