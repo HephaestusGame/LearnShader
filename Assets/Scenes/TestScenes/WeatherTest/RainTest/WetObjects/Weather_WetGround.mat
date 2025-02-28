@@ -61,14 +61,14 @@ Material:
     - _AnimationLength: 3
     - _BaseGlossiness: 1
     - _CrackAndHoleAnimTime: 7
-    - _CrackAndHoleFloodLevel: 1
+    - _CrackAndHoleFloodLevel: 0
     - _EnableReliefMapping: 1
     - _FlowSpeed: 0.0291
-    - _HeightScale: 0.005
-    - _LightIntensity: 1
+    - _HeightScale: 0.015
+    - _LightIntensity: 2.23
     - _PuddleAnimTime: 5
     - _PuddleFloodLevel: 1
-    - _PuddleMargin: 0.229
+    - _PuddleMargin: 1
     - _RainIntensity: 0.482
     - _RippleTiling: 0.05
     - _ShowVertexColor: 0

@@ -49,7 +49,7 @@ Material:
     - _BaseGlossiness: 1
     - _EnableReliefMapping: 0
     - _EnableWave: 1
-    - _FlowSpeed: 0.08
+    - _FlowSpeed: 0.09
     - _HeightScale: 0.01
     - _LightIntensity: 1
     - _PuddleFloodLevel: 1

@@ -87,6 +87,7 @@ Material:
     - _NormalScale: 0.25
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _ParallaxStrength: 0
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1

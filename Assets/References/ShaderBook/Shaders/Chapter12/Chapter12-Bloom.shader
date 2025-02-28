@@ -65,6 +65,14 @@ Shader "Unity Shaders Book/Chapter 12/Bloom" {
 		}
 		
 		fixed4 fragBloom(v2fBloom i) : SV_Target {
+			#if UNITY_UV_STARTS_AT_TOP			
+			if (_MainTex_TexelSize.y < 0.0)
+				return 1;
+			else
+			{
+				return 0;
+			}
+			#endif
 			return tex2D(_MainTex, i.uv.xy) + tex2D(_Bloom, i.uv.zw);
 		} 
 		

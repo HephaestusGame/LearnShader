@@ -13,7 +13,7 @@ inline float4 GetCascadeWeights_SplitSpheres(float3 wpos)
 	float3 fromCenter2 = wpos.xyz - unity_ShadowSplitSpheres[2].xyz;
 	float3 fromCenter3 = wpos.xyz - unity_ShadowSplitSpheres[3].xyz;
 	float4 distances2 = float4(dot(fromCenter0, fromCenter0), dot(fromCenter1, fromCenter1), dot(fromCenter2, fromCenter2), dot(fromCenter3, fromCenter3));
-
+	//unity_ShadowSplitSqRadii为四个 Cascade 阴影球的半径平方
 	float4 weights = float4(distances2 < unity_ShadowSplitSqRadii);
 	weights.yzw = saturate(weights.yzw - weights.xyz);
 	return weights;
@@ -22,14 +22,14 @@ inline float4 GetCascadeWeights_SplitSpheres(float3 wpos)
 //-----------------------------------------------------------------------------------------
 // GetCascadeShadowCoord
 //-----------------------------------------------------------------------------------------
-inline float3 GetCascadeShadowCoord(float4 wpos, float4 cascadeWeights)
+inline float4 GetCascadeShadowCoord(float4 wpos, float4 cascadeWeights)
 {
 	float3 sc0 = mul(unity_WorldToShadow[0], wpos).xyz;
 	float3 sc1 = mul(unity_WorldToShadow[1], wpos).xyz;
 	float3 sc2 = mul(unity_WorldToShadow[2], wpos).xyz;
 	float3 sc3 = mul(unity_WorldToShadow[3], wpos).xyz;
 			
-	float3 shadowMapCoordinate = float3(sc0 * cascadeWeights[0] + sc1 * cascadeWeights[1] + sc2 * cascadeWeights[2] + sc3 * cascadeWeights[3]);
+	float4 shadowMapCoordinate = float4(sc0 * cascadeWeights[0] + sc1 * cascadeWeights[1] + sc2 * cascadeWeights[2] + sc3 * cascadeWeights[3], 1);
 #if defined(UNITY_REVERSED_Z)
 	float  noCascadeWeights = 1 - dot(cascadeWeights, 1);
 	shadowMapCoordinate.z += noCascadeWeights;

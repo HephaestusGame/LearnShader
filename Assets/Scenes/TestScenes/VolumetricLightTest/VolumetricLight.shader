@@ -102,13 +102,15 @@ Shader "Learn/VolumetricLight"
                 float atten = GetLightAttenuation(curPos);
                 float density = GetDensity(curPos);
 
+                //_VolumetricLight x: scattering coef, y: extinction coef, z: range w: skybox extinction coef
                 float scattering = _VolumetricLight.x * stepSize * density;
-                extinction += _VolumetricLight.y * stepSize * density;
+                extinction += _VolumetricLight.y * stepSize * density;//累计气溶胶密度
                 float4 light = atten * scattering * exp(-extinction);
                 vLight += light;
                 curPos += step;
             }
 
+            //_MieG x: 1 - g^2, y: 1 + g^2, z: 2*g, w: 1/4pi
             vLight *= MieScattering(cosAngle, _MieG);
 
             vLight *= _LightColor * _IntensityScale;

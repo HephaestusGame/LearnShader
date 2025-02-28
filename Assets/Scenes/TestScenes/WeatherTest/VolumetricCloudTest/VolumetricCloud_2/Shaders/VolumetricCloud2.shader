@@ -109,6 +109,8 @@ Shader "Cloud/VolumetricCloud2"
                 return t + x;
             }
 
+
+            //将步进点的 xz 作为 uv 坐标采样噪声图，并且通过函数去模拟云的形状，采样得出当前点云的密度
             float CloudMapBase(float3 p, float norY)
             {
                 float3 offset = float3(cos(_CloudBearing), 0.0f, sin(_CloudBearing)) * (_BaseCloudOffset);
@@ -149,6 +151,7 @@ Shader "Cloud/VolumetricCloud2"
                 return Linearstep(0.0f, 0.05f, norY) - Linearstep(0.8f, 1.2f, norY);
             }
 
+            //根据步进点获取当前点的云层密度
             float CloudMap(float3 pos, float3 rd, float norY)
             {
                 float fade2 = sqrt((EARTH_RADIUS + _CloudBottom) * (EARTH_RADIUS + _CloudBottom) - EARTH_RADIUS * EARTH_RADIUS);
@@ -172,7 +175,7 @@ Shader "Cloud/VolumetricCloud2"
 
                 float fade = sqrt((EARTH_RADIUS + _CloudBottom) * (EARTH_RADIUS + _CloudBottom) - EARTH_RADIUS * EARTH_RADIUS);
                 float d = length(pos.xz);
-                fade = smoothstep(fade * 6, 0, d);
+                fade = smoothstep(fade * 6, 0, d);//xz距离越大，fade 越小
 
                 //m + (lerp(_CloudCoverage + _CloudCoverageBias - 1.0f, _CloudCoverage + _CloudCoverageBias , fade) - 1.)为考虑了远近、云层覆盖率的当前点的云的密度值
                 //通过对该密度值进行smoothstep，_CloudBaseEdgeSoftness越大，插值后的值越小，并且云的边缘更加平滑
@@ -193,7 +196,7 @@ Shader "Cloud/VolumetricCloud2"
                 float sunDotUp = max(0.0f, dot(float3(0, 1, 0), _SunDir));
                 
                 float dd = 12;
-                float3 rd = -sunDir;
+                float3 rd = -sunDir;//往光源方向步进
                 float d = dd * 2.0f;
 	            float shadow = 1.0 * lerp(1.5, 1, sunDotUp);
                 
@@ -209,7 +212,7 @@ Shader "Cloud/VolumetricCloud2"
                     //Beer衰减， muE * dd为当前步进区间密度,这里除以 8 做调整，让密度更低，透光率更高
                     shadow *= exp(-muE * dd / 8);
 
-                    dd *= 1.0 * lerp(1.8, 1, sunDotUp);
+                    dd *= 1.0 * lerp(1.8, 1, sunDotUp);//步进方向如果与向上方向夹角太大，步进距离变大（因为此时要穿越云层的距离会变大）
                     d += dd;
                 }
 
@@ -260,11 +263,11 @@ Shader "Cloud/VolumetricCloud2"
                     //当前点在云层内高度系数（0.0～1.0）
                     float norY = clamp((length(p) - (EARTH_RADIUS + _CloudBottom)) * (1.0f / _CloudHeight), 0.0f, 1.0f);
 
-                    float alpha = CloudMap(p, rd, norY);
-                    if (alpha > 0.005f)
+                    float alpha = CloudMap(p, rd, norY);//得到当前步进点的线密度
+                    if (alpha > 0.005f)//当前步进点有密度（表示在云层里）才需要计算光照
                     {
-                        //区间透光率
-                        float dTrans = exp(-alpha * dD);
+                        //区间透光率（Beer 定律，用于描述光线不同厚度云层时的能量衰减）
+                        float dTrans = exp(-alpha * dD);//alpha * dD为当前步进点区间密度
                         
                         float3 detail2 = CloudMapDetail(p * 0.35, norY, 1.0);
 			            float3 detail3 = CloudMapDetail(p * 1, norY, 1.0);
@@ -305,7 +308,7 @@ Shader "Cloud/VolumetricCloud2"
                                 light * (scattering * VolumetricShadow(p, _SunDir))+
                                 moonLight * (moonScattering * VolumetricShadow(p, _MoonDir))
                                 );
-                        float3 Sint = (S - (S * dTrans));//实际上就是没乘上alpha的S * (1 - dTrans)
+                        float3 Sint = (S - (S * dTrans));
                         scatteredLight += transmittance * Sint;
                         
                         transmittance *= dTrans;

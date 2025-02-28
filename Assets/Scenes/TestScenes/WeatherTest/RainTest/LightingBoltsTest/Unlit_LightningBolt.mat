@@ -85,7 +85,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AnimProgress: 0.74620247
+    - _AnimProgress: 1
     - _ClipValue: 1
     - _ShowPercent: 1
     m_Colors: []

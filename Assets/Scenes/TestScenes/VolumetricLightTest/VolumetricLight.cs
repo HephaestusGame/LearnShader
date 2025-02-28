@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Serialization;
@@ -196,6 +197,7 @@ namespace HephaestusGame
             GenerateDitherTexture8X8();
         }
 
+        //4x4的均匀随机（halton 序列？）
         private void GenerateDitherTexture4X4()
         {
             int size = 4;
@@ -228,6 +230,7 @@ namespace HephaestusGame
             ditheringTexture4X4.Apply();
         }
 
+        //8x8的均匀随机（halton 序列？）
         private void GenerateDitherTexture8X8()
         {
              int size = 8;

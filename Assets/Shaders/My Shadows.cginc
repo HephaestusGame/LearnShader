@@ -31,7 +31,6 @@
 
 UNITY_INSTANCING_BUFFER_START(InstanceProperties)
 	UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
-#define _Color_arr InstanceProperties
 UNITY_INSTANCING_BUFFER_END(InstanceProperties)
 
 sampler2D _MainTex;
@@ -78,7 +77,7 @@ struct Interpolators {
 };
 
 float GetAlpha (Interpolators i) {
-	float alpha = UNITY_ACCESS_INSTANCED_PROP(_Color_arr, _Color).a;
+	float alpha = UNITY_ACCESS_INSTANCED_PROP(InstanceProperties, _Color).a;
 	#if SHADOWS_NEED_UV
 		alpha *= tex2D(_MainTex, i.uv.xy).a;
 	#endif

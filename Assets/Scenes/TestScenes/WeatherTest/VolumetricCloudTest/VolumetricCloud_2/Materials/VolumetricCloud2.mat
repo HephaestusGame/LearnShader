@@ -26,7 +26,7 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _Attenuation: 1.5046543
+    - _Attenuation: 1.5026128
     - _CloudAlpha: 1
     - _CloudBaseEdgeSoftness: 0.2
     - _CloudBaseScale: 1.72
@@ -46,8 +46,8 @@ Material:
     - _HorizonFadeStart: 0
     - _MoonAttenuation: 0.1
     m_Colors:
-    - _CloudAmbientColorBottom: {r: 0.51548594, g: 0.5547249, b: 0.6037736, a: 1}
-    - _CloudAmbientColorTop: {r: 0.7549395, g: 0.79037845, b: 0.8207547, a: 1}
+    - _CloudAmbientColorBottom: {r: 0.4028881, g: 0.4541768, b: 0.50196993, a: 1}
+    - _CloudAmbientColorTop: {r: 0.86864173, g: 0.7500371, b: 0.6958133, a: 1}
     - _MoonColor: {r: 0.32941177, g: 0.36862746, b: 0.3882353, a: 1}
-    - _SunColor: {r: 0.57071084, g: 0.5306887, b: 0.4988404, a: 1}
+    - _SunColor: {r: 0.6202798, g: 0.4525447, b: 0.36045074, a: 1}
   m_BuildTextureStacks: []
